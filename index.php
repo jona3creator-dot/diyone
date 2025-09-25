@@ -1,6 +1,7 @@
 <?php
 /**
- * The main template file - DIYONE Corporate Website (修正版)
+ * The main template file - DIYONE Corporate Website (ver.1.1.1)
+ * 最新版：重複削除、JavaScriptコンフリクト修正、完全版
  */
 get_header(); ?>
 
@@ -208,7 +209,7 @@ get_header(); ?>
         </div>
     </section>
 
-    <!-- 強み（3つに変更） -->
+    <!-- 強み -->
     <section id="strengths" class="section strengths">
         <div class="strengths-container">
             <div class="container">
@@ -238,14 +239,14 @@ get_header(); ?>
         </div>
     </section>
 
-    <!-- 実績（Portfolio） -->
+    <!-- 実績 -->
     <section id="portfolio" class="section portfolio">
         <div class="container">
             <h2 class="section-title fade-in">Portfolio</h2>
             <p class="section-subtitle fade-in">これまでの制作実績をご紹介</p>
             
             <div class="portfolio-grid">
-                <!-- YouTube動画制作 -->
+                <!-- 映像制作 -->
                 <div class="portfolio-item fade-in">
                     <div class="portfolio-image video-thumb">
                         <div class="play-button">▶</div>
@@ -368,12 +369,12 @@ get_header(); ?>
 
             <!-- もっと見るボタン -->
             <div class="more-portfolio">
-                <a href="https://diyone.net/portfolio" class="cta-button">もっと見る</a>
+                <a href="<?php echo esc_url(home_url('/portfolio')); ?>" class="cta-button">もっと見る</a>
             </div>
         </div>
     </section>
 
-    <!-- お客様の声（スライド形式） -->
+    <!-- お客様の声 -->
     <section id="testimonials" class="section testimonials">
         <div class="container">
             <h2 class="section-title fade-in">Testimonials</h2>
@@ -483,47 +484,6 @@ get_header(); ?>
                         <span class="dot" data-slide="4"></span>
                     </div>
                     <button class="slider-btn next" aria-label="次へ">›</button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Give & Take セクション（非表示） -->
-    <section id="give-take" class="section give-take" style="display: none;">
-        <div class="container">
-            <div class="give-take-hero">
-                <div class="give-take-content">
-                    <h2>Give & Take</h2>
-                    <div class="subtitle">
-                        スキルシェアプラットフォーム
-                        <span class="coming-soon-badge">Coming Soon</span>
-                    </div>
-                    <p>クリエイターとクライアントをつなぐ新しいプラットフォームを準備中です。あなたのスキルを活かして、新しい働き方を始めませんか？</p>
-                    
-                    <div class="give-take-features">
-                        <div class="feature-item">
-                            <div class="feature-icon">🎨</div>
-                            <div class="feature-title">クリエイター登録</div>
-                            <div class="feature-desc">あなたのスキルを登録</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">🤝</div>
-                            <div class="feature-title">マッチング</div>
-                            <div class="feature-desc">最適なプロジェクトをご紹介</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">💰</div>
-                            <div class="feature-title">収益化</div>
-                            <div class="feature-desc">スキルを収入に変換</div>
-                        </div>
-                        <div class="feature-item">
-                            <div class="feature-icon">📈</div>
-                            <div class="feature-title">成長サポート</div>
-                            <div class="feature-desc">スキルアップ支援</div>
-                        </div>
-                    </div>
-                    
-                    <a href="#contact" class="cta-button">事前登録はこちら</a>
                 </div>
             </div>
         </div>
@@ -648,401 +608,5 @@ get_header(); ?>
         </div>
     </section>
 </main>
-
-<style>
-/* サービスカード開閉の修正 */
-.service-toggle {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.2rem;
-    font-weight: bold;
-    transition: transform 0.3s ease;
-    cursor: pointer;
-}
-
-.service-card.active .service-toggle {
-    transform: rotate(45deg);
-}
-
-.service-card.active .service-toggle::after {
-    content: '-';
-}
-
-/* ポートフォリオセクション */
-.portfolio {
-    background: 
-        linear-gradient(135deg, rgba(255, 215, 0, 0.03) 0%, rgba(255, 165, 0, 0.03) 100%),
-        linear-gradient(45deg, #fafafa 0%, #ffffff 50%, #f5f5f5 100%);
-    position: relative;
-}
-
-.portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 2rem;
-    margin-bottom: 3rem;
-}
-
-.portfolio-item {
-    background: white;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-}
-
-.portfolio-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(255, 215, 0, 0.2);
-}
-
-.portfolio-image {
-    height: 180px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    font-size: 1.5rem;
-    color: white;
-    font-weight: bold;
-}
-
-.video-thumb {
-    background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
-}
-
-.design-thumb {
-    background: linear-gradient(135deg, #4ECDC4, #6FDDDD);
-}
-
-.presentation-thumb {
-    background: linear-gradient(135deg, #A8E6CF, #C3F0CA);
-}
-
-.sns-thumb {
-    background: linear-gradient(135deg, #FFD93D, #FFE066);
-}
-
-.web-thumb {
-    background: linear-gradient(135deg, #FF8C42, #FFAB66);
-}
-
-.youtube-thumb {
-    background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
-}
-
-.ad-thumb {
-    background: linear-gradient(135deg, #6C5CE7, #A29BFE);
-}
-
-.office-thumb {
-    background: linear-gradient(135deg, #00B894, #00CEC9);
-}
-
-.play-button,
-.design-icon,
-.presentation-icon,
-.sns-icon,
-.web-icon,
-.ad-icon,
-.office-icon {
-    font-size: 2rem;
-}
-
-.portfolio-content {
-    padding: 1.5rem;
-}
-
-.portfolio-content h4 {
-    margin-bottom: 0.8rem;
-    color: #333;
-    font-weight: bold;
-    font-size: 1.1rem;
-}
-
-.portfolio-content p {
-    color: #666;
-    line-height: 1.5;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-}
-
-.portfolio-tags {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.portfolio-tag {
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    color: white;
-    padding: 0.25rem 0.7rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 500;
-}
-
-.more-portfolio {
-    text-align: center;
-    margin-top: 2rem;
-}
-
-/* お客様の声スライダー */
-.testimonials-slider {
-    position: relative;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.testimonial-wrapper {
-    position: relative;
-    overflow: hidden;
-}
-
-.testimonial-item {
-    background: white;
-    padding: 3rem 2rem 2rem;
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    display: none;
-    margin: 0 1rem;
-}
-
-.testimonial-item.active {
-    display: block;
-}
-
-.testimonial-content {
-    margin-bottom: 2rem;
-    position: relative;
-}
-
-.quote {
-    font-size: 4rem;
-    color: #FFD700;
-    position: absolute;
-    top: -2rem;
-    left: -0.5rem;
-    font-family: serif;
-    opacity: 0.3;
-    line-height: 1;
-}
-
-.testimonial-content p {
-    color: #333;
-    line-height: 1.8;
-    font-style: italic;
-    margin-left: 2rem;
-    font-size: 1.1rem;
-}
-
-.testimonial-author {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-left: 2rem;
-}
-
-.author-avatar {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    overflow: hidden;
-    flex-shrink: 0;
-}
-
-.author-info .author-name {
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 0.2rem;
-    font-size: 1.1rem;
-}
-
-.author-info .author-company {
-    color: #666;
-    font-size: 0.9rem;
-    margin-bottom: 0.3rem;
-}
-
-.author-info .author-service {
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    color: white;
-    padding: 0.2rem 0.8rem;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    display: inline-block;
-}
-
-.slider-nav {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.slider-btn {
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    color: white;
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.slider-btn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
-}
-
-.slider-dots {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #ddd;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.dot.active {
-    background: #FFD700;
-    transform: scale(1.3);
-}
-
-/* プライバシーポリシーの箇条書き修正 */
-.privacy-list {
-    list-style: none;
-    padding-left: 0;
-    margin: 1rem 0;
-}
-
-.privacy-list li {
-    padding: 0.2rem 0;
-    color: #666;
-    position: relative;
-    padding-left: 1rem;
-}
-
-.privacy-list li::before {
-    content: '•';
-    position: absolute;
-    left: 0;
-    color: #FFD700;
-    font-weight: bold;
-}
-
-/* レスポンシブ */
-@media (max-width: 768px) {
-    .portfolio-grid {
-        grid-template-columns: 1fr;
-        grid-template-rows: repeat(8, 1fr);
-    }
-    
-    .testimonial-item {
-        padding: 2rem 1.5rem;
-        margin: 0 0.5rem;
-    }
-    
-    .testimonial-content p {
-        font-size: 1rem;
-        margin-left: 1rem;
-    }
-    
-    .testimonial-author {
-        margin-left: 1rem;
-    }
-    
-    .slider-nav {
-        gap: 1rem;
-    }
-}
-</style>
-
-<script>
-// サービスカード開閉機能（個別対応）
-document.addEventListener('DOMContentLoaded', function() {
-    const serviceCards = document.querySelectorAll('.service-card');
-    
-    serviceCards.forEach(card => {
-        const toggle = card.querySelector('.service-toggle');
-        
-        card.addEventListener('click', function(e) {
-            // 他のカードを閉じる
-            serviceCards.forEach(otherCard => {
-                if (otherCard !== card) {
-                    otherCard.classList.remove('active');
-                    const otherToggle = otherCard.querySelector('.service-toggle');
-                    otherToggle.textContent = '+';
-                }
-            });
-            
-            // クリックしたカードを開閉
-            this.classList.toggle('active');
-            if (this.classList.contains('active')) {
-                toggle.textContent = '−';
-            } else {
-                toggle.textContent = '+';
-            }
-        });
-    });
-
-    // お客様の声スライダー
-    let currentSlide = 0;
-    const testimonials = document.querySelectorAll('.testimonial-item');
-    const dots = document.querySelectorAll('.dot');
-    const totalSlides = testimonials.length;
-
-    function showSlide(index) {
-        testimonials.forEach((testimonial, i) => {
-            testimonial.classList.toggle('active', i === index);
-        });
-        
-        dots.forEach((dot, i) => {
-            dot.classList.toggle('active', i === index);
-        });
-    }
-
-    function nextSlide() {
-        currentSlide = (currentSlide + 1) % totalSlides;
-        showSlide(currentSlide);
-    }
-
-    function prevSlide() {
-        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
-        showSlide(currentSlide);
-    }
-
-    // ナビゲーションボタン
-    document.querySelector('.slider-btn.next').addEventListener('click', nextSlide);
-    document.querySelector('.slider-btn.prev').addEventListener('click', prevSlide);
-
-    // ドットナビゲーション
-    dots.forEach((dot, index) => {
-        dot.addEventListener('click', () => {
-            currentSlide = index;
-            showSlide(currentSlide);
-        });
-    });
-
-    // 自動スライド（5秒間隔）
-    setInterval(nextSlide, 5000);
-});
-</script>
 
 <?php get_footer(); ?>

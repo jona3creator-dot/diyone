@@ -1,9 +1,10 @@
 <?php
 /**
- * Template Name: Privacy Policy Page
- * プライバシーポリシーページのテンプレート
+ * Template Name: Privacy Policy Page (ver.1.1.3)
+ * プライバシーポリシーページのテンプレート - シンプル版
  */
 get_header(); ?>
+
 <main id="primary" class="site-main privacy-policy-page">
     <div class="container">
         <div class="page-header">
@@ -11,12 +12,14 @@ get_header(); ?>
             <p class="page-subtitle">個人情報保護方針</p>
             <p class="last-updated">最終更新日：<?php echo date('Y年m月d日'); ?></p>
         </div>
+        
         <div class="privacy-content">
             <div class="privacy-section">
                 <div class="section-content">
                     <p>DIYONE（以下、「当社」という。）は、ユーザーの個人情報について以下のとおりプライバシーポリシー（以下、「本ポリシー」という。）を定めます。本ポリシーは、当社がどのような個人情報を取得し、どのように利用・共有するか、ユーザーがどのようにご自身の個人情報を管理できるかをご説明するものです。</p>
                 </div>
             </div>
+            
             <div class="privacy-section">
                 <h2 class="section-title">1. 事業者情報</h2>
                 <div class="section-content">
@@ -40,6 +43,7 @@ get_header(); ?>
                     </table>
                 </div>
             </div>
+            
             <div class="privacy-section">
                 <h2 class="section-title">2. 個人情報の取得</h2>
                 <div class="section-content">
@@ -52,12 +56,13 @@ get_header(); ?>
                     </ul>
                 </div>
             </div>
+            
             <div class="privacy-section">
                 <h2 class="section-title">3. 取得する個人情報の項目</h2>
                 <div class="section-content">
                     <p>当社が取得する個人情報の項目は以下のとおりです。</p>
                     <ul class="privacy-list">
-                        <li>氏名</li>
+                        <li>氏名・ふりがな</li>
                         <li>会社名・団体名</li>
                         <li>メールアドレス</li>
                         <li>電話番号</li>
@@ -66,6 +71,7 @@ get_header(); ?>
                     </ul>
                 </div>
             </div>
+            
             <div class="privacy-section">
                 <h2 class="section-title">4. 個人情報の利用目的</h2>
                 <div class="section-content">
@@ -81,6 +87,7 @@ get_header(); ?>
                     </ul>
                 </div>
             </div>
+            
             <div class="privacy-section">
                 <h2 class="section-title">5. 個人情報の第三者提供</h2>
                 <div class="section-content">
@@ -93,12 +100,14 @@ get_header(); ?>
                     </ul>
                 </div>
             </div>
+            
             <div class="privacy-section">
                 <h2 class="section-title">6. 個人情報の保存期間</h2>
                 <div class="section-content">
                     <p>当社は、個人情報の利用目的が達成されるまでの期間、または法令等により保存が義務付けられている期間、個人情報を保存いたします。保存期間が経過した個人情報については、適切に削除または匿名化いたします。</p>
                 </div>
             </div>
+            
             <div class="privacy-section">
                 <h2 class="section-title">7. 個人情報の安全管理</h2>
                 <div class="section-content">
@@ -111,12 +120,14 @@ get_header(); ?>
                     </ul>
                 </div>
             </div>
+            
             <div class="privacy-section">
                 <h2 class="section-title">8. 個人情報の開示・訂正・削除</h2>
                 <div class="section-content">
                     <p>ユーザーは、当社が保有する自己の個人情報について、開示、訂正、追加、削除、利用停止、消去または第三者提供の停止を求めることができます。これらの請求については、以下の連絡先までお問い合わせください。</p>
                 </div>
             </div>
+            
             <div class="privacy-section">
                 <h2 class="section-title">9. Cookieの使用について</h2>
                 <div class="section-content">
@@ -132,6 +143,7 @@ get_header(); ?>
                     <p>ユーザーはブラウザの設定によりCookieの受信を拒否することができますが、その場合、一部のサービスが利用できない場合があります。</p>
                 </div>
             </div>
+            
             <div class="privacy-section">
                 <h2 class="section-title">10. アクセス解析ツールについて</h2>
                 <div class="section-content">
@@ -139,12 +151,29 @@ get_header(); ?>
                     <p>Google Analyticsについて詳しくは、<a href="https://marketingplatform.google.com/about/analytics/terms/jp/" target="_blank" rel="noopener">Googleアナリティクス利用規約</a>および<a href="https://policies.google.com/privacy?hl=ja" target="_blank" rel="noopener">Googleプライバシーポリシー</a>をご覧ください。</p>
                 </div>
             </div>
+            
             <div class="privacy-section">
                 <h2 class="section-title">11. プライバシーポリシーの変更</h2>
                 <div class="section-content">
                     <p>当社は、法令の改正や事業の変更に伴い、本ポリシーを変更する場合があります。変更後のプライバシーポリシーは、当社のWebサイトに掲載した時点で効力を生じるものとします。</p>
+                    <p>重要な変更がある場合は、当社のWebサイト上で目立つように告知いたします。定期的に本ページをご確認くださいますようお願いいたします。</p>
                 </div>
             </div>
+            
+            <div class="privacy-section">
+                <h2 class="section-title">12. 免責事項</h2>
+                <div class="section-content">
+                    <p>当社のWebサイトからリンクされている他のWebサイトにおける個人情報の取り扱いについては、当社は一切の責任を負いません。リンク先のWebサイトのプライバシーポリシーをご確認ください。</p>
+                </div>
+            </div>
+            
+            <div class="privacy-section">
+                <h2 class="section-title">13. 準拠法・管轄裁判所</h2>
+                <div class="section-content">
+                    <p>本ポリシーの解釈・適用については、日本法に準拠するものとします。本ポリシーに関して紛争が生じた場合は、東京地方裁判所を第一審の専属的合意管轄裁判所とします。</p>
+                </div>
+            </div>
+            
             <div class="contact-info">
                 <h3>お問い合わせ窓口</h3>
                 <p>本ポリシーに関するお問い合わせは、以下の窓口までご連絡ください。</p>
@@ -159,149 +188,20 @@ get_header(); ?>
                     </tr>
                     <tr>
                         <th>メールアドレス</th>
-                        <td>diyone001@gmail.com</td>
+                        <td><a href="mailto:diyone001@gmail.com">diyone001@gmail.com</a></td>
                     </tr>
                     <tr>
                         <th>受付時間</th>
                         <td>平日 9:00-18:00（土日祝日を除く）</td>
+                    </tr>
+                    <tr>
+                        <th>対応期間</th>
+                        <td>お問い合わせから原則として2週間以内にご回答いたします</td>
                     </tr>
                 </table>
             </div>
         </div>
     </div>
 </main>
-<style>
-/* プライバシーポリシーページ専用スタイル */
-.privacy-policy-page {
-    margin-top: 100px;
-    padding: 3rem 0 5rem;
-}
-.page-header {
-    text-align: center;
-    margin-bottom: 3rem;
-}
-.page-title {
-    font-size: 2.8rem;
-    margin-bottom: 1rem;
-    background: linear-gradient(135deg, #333 0%, #FFD700 50%, #FFA500 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-weight: 800;
-}
-.page-subtitle {
-    font-size: 1.1rem;
-    color: #666;
-    margin-bottom: 1rem;
-}
-.last-updated {
-    font-size: 0.9rem;
-    color: #999;
-    font-style: italic;
-}
-.privacy-content {
-    background: white;
-    padding: 3rem;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    line-height: 1.8;
-}
-.privacy-section {
-    margin-bottom: 3rem;
-}
-.privacy-section:last-child {
-    margin-bottom: 0;
-}
-.section-title {
-    font-size: 1.4rem;
-    color: #333;
-    margin-bottom: 1rem;
-    font-weight: bold;
-    border-left: 4px solid #FFD700;
-    padding-left: 1rem;
-}
-.section-content {
-    margin-bottom: 1.5rem;
-}
-.section-content p {
-    margin-bottom: 1rem;
-}
-.subsection {
-    margin-bottom: 2rem;
-}
-.subsection-title {
-    font-size: 1.1rem;
-    color: #333;
-    margin-bottom: 0.8rem;
-    font-weight: bold;
-}
-.privacy-list {
-    list-style: none;
-    padding-left: 1rem;
-}
-.privacy-list li {
-    margin-bottom: 0.5rem;
-    position: relative;
-    padding-left: 1rem;
-}
-.privacy-list li:before {
-    content: '•';
-    position: absolute;
-    left: 0;
-    color: #FFD700;
-    font-weight: bold;
-}
-.privacy-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1rem 0;
-}
-.privacy-table th,
-.privacy-table td {
-    padding: 0.8rem;
-    text-align: left;
-    border-bottom: 1px solid #e0e0e0;
-}
-.privacy-table th {
-    background: #f8f9fa;
-    font-weight: bold;
-    color: #333;
-    width: 25%;
-}
-.contact-info {
-    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-    padding: 2rem;
-    border-radius: 10px;
-    margin-top: 2rem;
-    border: 1px solid rgba(255, 215, 0, 0.2);
-}
-.contact-info h3 {
-    color: #333;
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
-}
-.privacy-content a {
-    color: #FFD700;
-    text-decoration: underline;
-    transition: color 0.3s ease;
-}
-.privacy-content a:hover {
-    color: #FFA500;
-}
-@media (max-width: 768px) {
-    .privacy-content {
-        padding: 2rem 1.5rem;
-    }
-    .page-title {
-        font-size: 2.2rem;
-    }
-    .privacy-table {
-        font-size: 0.9rem;
-    }
-    .privacy-table th,
-    .privacy-table td {
-        padding: 0.6rem;
-    }
-}
-</style>
+
 <?php get_footer(); ?>

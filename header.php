@@ -1,6 +1,7 @@
 <?php
 /**
- * Header template - DIYONE Corporate Website (修正版)
+ * Header template - DIYONE Corporate Website (ver.1.1.3)
+ * 最新版：重複削除、SEO最適化、アクセシビリティ向上
  */
 ?><!DOCTYPE html>
 <html <?php language_attributes(); ?>>
@@ -113,21 +114,15 @@
         "name": "DIYONE",
         "description": "オンライン完結のワンストップデジタルサービス",
         "url": "<?php echo home_url(); ?>",
-        "logo": "<?php echo get_template_directory_uri(); ?>/assets/images/logo.png",
         "contactPoint": {
             "@type": "ContactPoint",
-            "telephone": "",
             "contactType": "customer service",
-            "email": "info@diyone.com"
+            "email": "diyone001@gmail.com"
         },
-        "sameAs": [
-            "https://twitter.com/diyone",
-            "https://facebook.com/diyone",
-            "https://instagram.com/diyone"
-        ],
         "address": {
             "@type": "PostalAddress",
-            "addressCountry": "JP"
+            "addressCountry": "ID",
+            "addressLocality": "Bali"
         }
     }
     </script>

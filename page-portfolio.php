@@ -1,6 +1,7 @@
 <?php
 /**
- * Portfolio Page Template - DIYONE Corporate Website
+ * Portfolio Page Template - DIYONE Corporate Website (ver.1.1.3)
+ * 最新版：フィルター修正、グリッドレイアウト調整
  */
 get_header(); ?>
 
@@ -26,7 +27,6 @@ get_header(); ?>
                 <button class="category-tab" data-category="sns">SNS運用</button>
                 <button class="category-tab" data-category="ads">広告運用</button>
                 <button class="category-tab" data-category="youtube">YouTube運営とM&A</button>
-
             </div>
         </div>
     </section>
@@ -52,6 +52,10 @@ get_header(); ?>
                             <span class="portfolio-tag">撮影</span>
                             <span class="portfolio-tag">編集</span>
                         </div>
+                        <div class="portfolio-results">
+                            <span class="result-item">視聴完了率: 85%</span>
+                            <span class="result-item">問い合わせ増加: 30%</span>
+                        </div>
                     </div>
                 </div>
 
@@ -70,6 +74,10 @@ get_header(); ?>
                             <span class="portfolio-tag">商品PR</span>
                             <span class="portfolio-tag">プロモーション</span>
                             <span class="portfolio-tag">撮影</span>
+                        </div>
+                        <div class="portfolio-results">
+                            <span class="result-item">売上向上: 150%</span>
+                            <span class="result-item">認知度向上: 40%</span>
                         </div>
                     </div>
                 </div>
@@ -90,6 +98,9 @@ get_header(); ?>
                             <span class="portfolio-tag">CI/VI</span>
                             <span class="portfolio-tag">印刷物</span>
                         </div>
+                        <div class="portfolio-results">
+                            <span class="result-item">ブランド認知度: 40%向上</span>
+                        </div>
                     </div>
                 </div>
 
@@ -107,6 +118,9 @@ get_header(); ?>
                             <span class="portfolio-tag">Webバナー</span>
                             <span class="portfolio-tag">キャンペーン</span>
                             <span class="portfolio-tag">デジタル広告</span>
+                        </div>
+                        <div class="portfolio-results">
+                            <span class="result-item">CTR向上: 35%</span>
                         </div>
                     </div>
                 </div>
@@ -127,6 +141,9 @@ get_header(); ?>
                             <span class="portfolio-tag">コーポレートサイト</span>
                             <span class="portfolio-tag">レスポンシブ</span>
                         </div>
+                        <div class="portfolio-results">
+                            <span class="result-item">お問い合わせ数: 200%向上</span>
+                        </div>
                     </div>
                 </div>
 
@@ -144,6 +161,9 @@ get_header(); ?>
                             <span class="portfolio-tag">Shopify</span>
                             <span class="portfolio-tag">ECサイト</span>
                             <span class="portfolio-tag">アパレル</span>
+                        </div>
+                        <div class="portfolio-results">
+                            <span class="result-item">売上向上: 180%</span>
                         </div>
                     </div>
                 </div>
@@ -164,6 +184,10 @@ get_header(); ?>
                             <span class="portfolio-tag">コンテンツ制作</span>
                             <span class="portfolio-tag">投稿代行</span>
                         </div>
+                        <div class="portfolio-results">
+                            <span class="result-item">フォロワー: 300%増加</span>
+                            <span class="result-item">来店者数: 25%増加</span>
+                        </div>
                     </div>
                 </div>
 
@@ -181,6 +205,9 @@ get_header(); ?>
                             <span class="portfolio-tag">TikTok</span>
                             <span class="portfolio-tag">ショート動画</span>
                             <span class="portfolio-tag">美容</span>
+                        </div>
+                        <div class="portfolio-results">
+                            <span class="result-item">再生回数: 10万回突破</span>
                         </div>
                     </div>
                 </div>
@@ -202,6 +229,10 @@ get_header(); ?>
                             <span class="portfolio-tag">ROAS改善</span>
                             <span class="portfolio-tag">EC連携</span>
                         </div>
+                        <div class="portfolio-results">
+                            <span class="result-item">ROAS: 300%達成</span>
+                            <span class="result-item">売上: 250%向上</span>
+                        </div>
                     </div>
                 </div>
 
@@ -220,6 +251,9 @@ get_header(); ?>
                             <span class="portfolio-tag">Google広告</span>
                             <span class="portfolio-tag">GA4分析</span>
                             <span class="portfolio-tag">CV改善</span>
+                        </div>
+                        <div class="portfolio-results">
+                            <span class="result-item">CV率: 45%改善</span>
                         </div>
                     </div>
                 </div>
@@ -241,6 +275,10 @@ get_header(); ?>
                             <span class="portfolio-tag">教育コンテンツ</span>
                             <span class="portfolio-tag">チャンネル設計</span>
                         </div>
+                        <div class="portfolio-results">
+                            <span class="result-item">登録者数: 10,000人達成</span>
+                            <span class="result-item">収益化: 成功</span>
+                        </div>
                     </div>
                 </div>
 
@@ -260,10 +298,11 @@ get_header(); ?>
                             <span class="portfolio-tag">EC連携</span>
                             <span class="portfolio-tag">動画制作</span>
                         </div>
+                        <div class="portfolio-results">
+                            <span class="result-item">購入率: 60%向上</span>
+                        </div>
                     </div>
                 </div>
-
-
             </div>
 
             <!-- もっと見るボタン -->
@@ -348,334 +387,6 @@ get_header(); ?>
         </div>
     </section>
 </main>
-
-<style>
-/* ページヘッダー */
-.page-hero {
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #e9ecef 100%);
-    padding: 8rem 0 4rem;
-    text-align: center;
-}
-
-.page-title {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    background: linear-gradient(135deg, #333 0%, #FFD700 50%, #FFA500 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-weight: 800;
-}
-
-.page-subtitle {
-    font-size: 1.2rem;
-    color: #666;
-    margin-bottom: 2rem;
-}
-
-/* フィルタータブ */
-.portfolio-filter {
-    padding: 2rem 0;
-}
-
-.filter-tabs {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 2rem;
-}
-
-.category-tab {
-    padding: 0.8rem 2rem;
-    border: 2px solid #e0e0e0;
-    background: white;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-}
-
-.category-tab.active,
-.category-tab:hover {
-    border-color: #FFD700;
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    color: white;
-}
-
-/* ポートフォリオグリッド */
-.portfolio-showcase {
-    padding: 2rem 0 4rem;
-}
-
-.portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: 2rem;
-    margin-bottom: 3rem;
-}
-
-.portfolio-item {
-    background: white;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    opacity: 1;
-    transform: scale(1);
-}
-
-.portfolio-item.hidden {
-    display: none;
-}
-
-.portfolio-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(255, 215, 0, 0.2);
-}
-
-.portfolio-image {
-    height: 250px;
-    position: relative;
-    overflow: hidden;
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.video-thumb {
-    background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
-}
-
-.design-thumb {
-    background: linear-gradient(135deg, #4ECDC4, #6FDDDD);
-}
-
-.sns-thumb {
-    background: linear-gradient(135deg, #A8E6CF, #C3F0CA);
-}
-
-.youtube-thumb {
-    background: linear-gradient(135deg, #FFD93D, #FFE066);
-}
-
-.web-thumb {
-    background: linear-gradient(135deg, #FF8C42, #FFAB66);
-}
-
-.office-thumb {
-    background: linear-gradient(135deg, #00B894, #00CEC9);
-}
-
-.play-button,
-.ads-icon {
-    font-size: 2rem;
-    color: white;
-}
-
-.portfolio-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    opacity: 0;
-    transition: all 0.3s ease;
-}
-
-.portfolio-item:hover .portfolio-overlay {
-    opacity: 1;
-}
-
-.portfolio-content {
-    padding: 2rem;
-}
-
-.portfolio-content h4 {
-    margin-bottom: 1rem;
-    color: #333;
-    font-weight: bold;
-}
-
-.portfolio-content p {
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-}
-
-.portfolio-tags {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.portfolio-tag {
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    color: white;
-    padding: 0.3rem 0.8rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 500;
-}
-
-/* もっと見るボタン */
-.more-portfolio {
-    text-align: center;
-    margin-top: 2rem;
-}
-
-/* 制作プロセス */
-.creation-process {
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f1f3f4 100%);
-}
-
-.process-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
-    margin-top: 3rem;
-    position: relative;
-}
-
-.process-item {
-    background: white;
-    padding: 2.5rem 2rem;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    position: relative;
-    transition: all 0.3s ease;
-}
-
-.process-item:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 35px rgba(255, 215, 0, 0.2);
-}
-
-.process-step {
-    position: absolute;
-    top: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-}
-
-.process-icon {
-    font-size: 2rem;
-    margin: 1rem 0;
-}
-
-.process-item h4 {
-    margin-bottom: 1rem;
-    color: #333;
-    font-weight: bold;
-}
-
-.process-item p {
-    color: #666;
-    line-height: 1.6;
-}
-
-.process-arrow {
-    position: absolute;
-    top: 50%;
-    right: -2rem;
-    transform: translateY(-50%);
-    font-size: 2rem;
-    color: #FFD700;
-    font-weight: bold;
-}
-
-.process-item:last-child .process-arrow {
-    display: none;
-}
-
-/* 成果セクション */
-.results-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-top: 3rem;
-}
-
-.result-item {
-    background: white;
-    padding: 2.5rem 2rem;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-}
-
-.result-number {
-    font-size: 3rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 0.5rem;
-}
-
-.result-label {
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 1rem;
-}
-
-.result-item p {
-    color: #666;
-    line-height: 1.6;
-}
-
-/* レスポンシブ */
-@media (max-width: 768px) {
-    .page-title {
-        font-size: 2rem;
-    }
-    
-    .filter-tabs {
-        gap: 0.5rem;
-    }
-    
-    .category-tab {
-        padding: 0.6rem 1.5rem;
-        font-size: 0.9rem;
-    }
-    
-    .portfolio-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .process-grid {
-        grid-template-columns: 1fr;
-        gap: 3rem;
-    }
-    
-    .process-arrow {
-        display: none;
-    }
-    
-    .results-grid {
-        grid-template-columns: 1fr;
-    }
-}
-</style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
