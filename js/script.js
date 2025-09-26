@@ -350,3 +350,103 @@ function initResponsive() {
 window.addEventListener('error', function(e) {
     console.error('DIYONE Theme Error:', e.message);
 });
+
+// 送信ボタンのローディング機能
+document.addEventListener('DOMContentLoaded', function() {
+    const contactForm = document.querySelector('.contact-form');
+    const submitButton = document.querySelector('.form-submit');
+    
+    if (contactForm && submitButton) {
+        contactForm.addEventListener('submit', function() {
+            // ボタンのテキストを変更
+            submitButton.innerHTML = '送信中...';
+            submitButton.disabled = true;
+            
+            // ローディングアニメーションを追加
+            submitButton.style.background = 'linear-gradient(135deg, #ccc, #999)';
+            submitButton.style.cursor = 'not-allowed';
+        });
+    }
+});
+
+// YouTube動画モーダル機能
+document.addEventListener('DOMContentLoaded', function() {
+    // YouTubeモーダルの作成
+    function createYouTubeModal() {
+        const modal = document.createElement('div');
+        modal.id = 'youtube-modal';
+        modal.innerHTML = `
+            <div class="youtube-modal-overlay">
+                <div class="youtube-modal-content">
+                    <button class="youtube-modal-close">&times;</button>
+                    <div class="youtube-video-container">
+                        <iframe id="youtube-iframe" width="100%" height="100%" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        
+        // モーダルを閉じる機能
+        const closeBtn = modal.querySelector('.youtube-modal-close');
+        const overlay = modal.querySelector('.youtube-modal-overlay');
+        
+        closeBtn.addEventListener('click', closeYouTubeModal);
+        overlay.addEventListener('click', function(e) {
+            if (e.target === overlay) {
+                closeYouTubeModal();
+            }
+        });
+    }
+    
+    // YouTube動画を開く
+    function openYouTubeModal(videoUrl) {
+        const modal = document.getElementById('youtube-modal');
+        const iframe = document.getElementById('youtube-iframe');
+        
+        // YouTube URLを埋め込み形式に変換
+        const videoId = extractYouTubeVideoId(videoUrl);
+        if (videoId) {
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+    }
+    
+    // モーダルを閉じる
+    function closeYouTubeModal() {
+        const modal = document.getElementById('youtube-modal');
+        const iframe = document.getElementById('youtube-iframe');
+        
+        modal.style.display = 'none';
+        iframe.src = '';
+        document.body.style.overflow = 'auto';
+    }
+    
+    // YouTube Video IDを抽出
+    function extractYouTubeVideoId(url) {
+        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+        const match = url.match(regExp);
+        return (match && match[2].length === 11) ? match[2] : null;
+    }
+    
+    // ポートフォリオアイテムにクリックイベントを追加
+    const portfolioItems = document.querySelectorAll('.portfolio-item[data-youtube-url]');
+    portfolioItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const youtubeUrl = this.getAttribute('data-youtube-url');
+            if (youtubeUrl) {
+                openYouTubeModal(youtubeUrl);
+            }
+        });
+        
+        // カーソルをポインターに
+        item.style.cursor = 'pointer';
+    });
+    
+    // モーダルを初期化
+    if (!document.getElementById('youtube-modal')) {
+        createYouTubeModal();
+    }
+});

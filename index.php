@@ -244,135 +244,141 @@ get_header(); ?>
         <div class="container">
             <h2 class="section-title fade-in">Portfolio</h2>
             <p class="section-subtitle fade-in">これまでの制作実績をご紹介</p>
+        
+        <div class="portfolio-grid">
+            <?php
+            // おすすめのポートフォリオを取得
+            $portfolio_query = new WP_Query(array(
+                'post_type' => 'portfolio',
+                'posts_per_page' => 8,
+                'meta_query' => array(
+                    array(
+                        'key' => '_featured_on_home',
+                        'value' => '1',
+                        'compare' => '='
+                    )
+                ),
+                'orderby' => 'date',
+                'order' => 'DESC'
+            ));
             
-            <div class="portfolio-grid">
-                <!-- 映像制作 -->
-                <div class="portfolio-item fade-in">
-                    <div class="portfolio-image video-thumb">
-                        <div class="play-button">▶</div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>企業PR動画制作</h4>
-                        <p>BtoB企業向けの会社紹介動画を制作。視聴完了率85%を達成</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">映像制作</span>
-                            <span class="portfolio-tag">企業PR</span>
+            if ($portfolio_query->have_posts()) :
+                while ($portfolio_query->have_posts()) : $portfolio_query->the_post();
+                    $project_type = get_post_meta(get_the_ID(), '_project_type', true);
+                    $client_name = get_post_meta(get_the_ID(), '_client_name', true);
+                    $results = get_post_meta(get_the_ID(), '_results', true);
+                    $result_numbers = get_post_meta(get_the_ID(), '_result_numbers', true);
+                    $tags = get_post_meta(get_the_ID(), '_tags', true);
+                    $media_type = get_post_meta(get_the_ID(), '_media_type', true);
+                    $youtube_url = get_post_meta(get_the_ID(), '_youtube_url', true);
+                    
+                    // プロジェクトタイプによる背景色の設定
+                    $bg_class = '';
+                    $icon = '';
+                    switch($project_type) {
+                        case 'video':
+                            $bg_class = 'video-thumb';
+                            $icon = '<div class="play-button">▶</div>';
+                            break;
+                        case 'design':
+                            $bg_class = 'design-thumb';
+                            $icon = '<div class="design-icon">🎨</div>';
+                            break;
+                        case 'web':
+                            $bg_class = 'web-thumb';
+                            $icon = '<div class="web-icon">💻</div>';
+                            break;
+                        case 'sns':
+                            $bg_class = 'sns-thumb';
+                            $icon = '<div class="sns-icon">📱</div>';
+                            break;
+                        case 'ads':
+                            $bg_class = 'ads-thumb';
+                            $icon = '<div class="ads-icon">📊</div>';
+                            break;
+                        case 'youtube':
+                            $bg_class = 'youtube-thumb';
+                            $icon = '<div class="play-button">▶</div>';
+                            break;
+                        default:
+                            $bg_class = 'video-thumb';
+                            $icon = '<div class="play-button">▶</div>';
+                    }
+                    
+                    // YouTube動画の場合はdata属性を追加
+                    $youtube_attr = '';
+                    if ($media_type === 'youtube' && $youtube_url) {
+                        $youtube_attr = 'data-youtube-url="' . esc_attr($youtube_url) . '"';
+                    }
+                    ?>
+                    <div class="portfolio-item fade-in" <?php echo $youtube_attr; ?>>
+                        <div class="portfolio-image <?php echo $bg_class; ?>">
+                            <?php if (has_post_thumbnail()): ?>
+                                <?php the_post_thumbnail('portfolio-thumb'); ?>
+                            <?php else: ?>
+                                <?php echo $icon; ?>
+                            <?php endif; ?>
+                        </div>
+                        <div class="portfolio-content">
+                            <h4><?php the_title(); ?></h4>
+                            <?php if ($client_name): ?>
+                                <p><strong><?php echo esc_html($client_name); ?></strong></p>
+                            <?php endif; ?>
+                            <p><?php echo wp_trim_words(get_the_content(), 20, '...'); ?></p>
+                            
+                            <?php if ($tags): ?>
+                            <div class="portfolio-tags">
+                                <?php 
+                                $tag_array = explode(',', $tags);
+                                foreach ($tag_array as $tag): 
+                                ?>
+                                <span class="portfolio-tag"><?php echo trim($tag); ?></span>
+                                <?php endforeach; ?>
+                            </div>
+                            <?php endif; ?>
+                            
+                            <?php if ($result_numbers): ?>
+                            <div class="portfolio-results">
+                                <span class="result-item"><?php echo esc_html($result_numbers); ?></span>
+                            </div>
+                            <?php endif; ?>
                         </div>
                     </div>
-                </div>
-
-                <!-- デザイン制作 -->
-                <div class="portfolio-item fade-in">
-                    <div class="portfolio-image design-thumb">
-                        <div class="design-icon">🎨</div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>ブランドロゴデザイン</h4>
-                        <p>スタートアップ企業のロゴ・CI設計を担当。ブランド認知度40%向上</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">ブランディング</span>
-                            <span class="portfolio-tag">ロゴ制作</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- プレゼン資料 -->
-                <div class="portfolio-item fade-in">
-                    <div class="portfolio-image presentation-thumb">
-                        <div class="presentation-icon">📊</div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>営業資料作成</h4>
-                        <p>プレゼンテーション資料を戦略的に設計。成約率30%向上に貢献</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">資料作成</span>
-                            <span class="portfolio-tag">営業支援</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SNS運用 -->
-                <div class="portfolio-item fade-in">
-                    <div class="portfolio-image sns-thumb">
-                        <div class="sns-icon">📱</div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>Instagram運用代行</h4>
-                        <p>カフェのInstagramアカウント運用。フォロワー数を6ヶ月で3倍に増加</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">SNS運用</span>
-                            <span class="portfolio-tag">Instagram</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Web制作 -->
-                <div class="portfolio-item fade-in">
-                    <div class="portfolio-image web-thumb">
-                        <div class="web-icon">💻</div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>コーポレートサイト</h4>
-                        <p>建設会社のコーポレートサイトをWordPressで制作。お問い合わせ数200%向上</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">Web制作</span>
-                            <span class="portfolio-tag">WordPress</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- YouTube運営 -->
-                <div class="portfolio-item fade-in">
-                    <div class="portfolio-image youtube-thumb">
-                        <div class="play-button">▶</div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>YouTubeチャンネル運営</h4>
-                        <p>教育系YouTubeチャンネル立ち上げ。チャンネル登録者1万人達成</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">YouTube運営</span>
-                            <span class="portfolio-tag">教育コンテンツ</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 広告運用 -->
-                <div class="portfolio-item fade-in">
-                    <div class="portfolio-image ad-thumb">
-                        <div class="ad-icon">📊</div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>Meta広告運用</h4>
-                        <p>ECサイトのMeta広告を運用。ROAS300%を達成し売上大幅向上</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">広告運用</span>
-                            <span class="portfolio-tag">Meta広告</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- オンライン事務 -->
-                <div class="portfolio-item fade-in">
-                    <div class="portfolio-image office-thumb">
-                        <div class="office-icon">💼</div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>データ入力・整理</h4>
-                        <p>大手企業の顧客データベース整理。作業効率を50%向上させました</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">オンライン事務</span>
-                            <span class="portfolio-tag">データ整理</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- もっと見るボタン -->
-            <div class="more-portfolio">
-                <a href="<?php echo esc_url(home_url('/portfolio')); ?>" class="cta-button">もっと見る</a>
-            </div>
+                    <?php
+                endwhile;
+                wp_reset_postdata();
+            else:
+                // おすすめが設定されていない場合は、最新の8つを表示
+                $fallback_query = new WP_Query(array(
+                    'post_type' => 'portfolio',
+                    'posts_per_page' => 8,
+                    'orderby' => 'date',
+                    'order' => 'DESC'
+                ));
+                
+                if ($fallback_query->have_posts()) :
+                    while ($fallback_query->have_posts()) : $fallback_query->the_post();
+                        // 上記と同じ表示処理...
+                    endwhile;
+                    wp_reset_postdata();
+                endif;
+            endif;
+            ?>
         </div>
+
+        <!-- もっと見るボタン -->
+        <div class="more-portfolio">
+            <a href="<?php echo esc_url(home_url('/portfolio')); ?>" class="cta-button">もっと見る</a>
+        </div>
+    </div>
     </section>
+
+        <!-- もっと見るボタン -->
+        <div class="more-portfolio">
+            <a href="<?php echo esc_url(home_url('/portfolio')); ?>" class="cta-button">もっと見る</a>
+        </div>
+    </div>
+</section>
 
     <!-- お客様の声 -->
     <section id="testimonials" class="section testimonials">

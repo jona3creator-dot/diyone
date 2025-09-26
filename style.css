@@ -1970,3 +1970,105 @@ body {
         text-decoration: underline;
     }
 }
+
+/* YouTube動画モーダル */
+#youtube-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.youtube-modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.youtube-modal-content {
+    position: relative;
+    width: 90%;
+    max-width: 800px;
+    aspect-ratio: 16/9;
+    background: #000;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.youtube-modal-close {
+    position: absolute;
+    top: -40px;
+    right: 0;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    z-index: 10001;
+    padding: 5px 10px;
+}
+
+.youtube-modal-close:hover {
+    color: #FFD700;
+}
+
+.youtube-video-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.youtube-video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* ポートフォリオアイテムにYouTube動画がある場合の表示 */
+.portfolio-item[data-youtube-url] .portfolio-image {
+    position: relative;
+}
+
+.portfolio-item[data-youtube-url] .portfolio-image::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 0, 0, 0.8);
+    border-radius: 8px;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>');
+    background-size: 24px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.portfolio-item[data-youtube-url]:hover .portfolio-image::after {
+    background: rgba(255, 0, 0, 1);
+    transform: translate(-50%, -50%) scale(1.1);
+}
+
+@media (max-width: 768px) {
+    .youtube-modal-content {
+        width: 95%;
+        margin: 0 auto;
+    }
+    
+    .youtube-modal-close {
+        top: -50px;
+        font-size: 1.5rem;
+    }
+}

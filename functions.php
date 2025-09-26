@@ -103,6 +103,26 @@ function handle_contact_form_submission() {
     // レート制限カウンターの更新
     $new_attempts = $attempts ? $attempts + 1 : 1;
     set_transient($rate_limit_key, $new_attempts, 60); // 1分間
+
+    // Googleスプレッドシートに送信
+    $spreadsheet_url = 'https://script.google.com/macros/s/AKfycbz1KnDw3y2OmYHg-vwLz0zjD4cRUljqHCdcqOWZreWHJYIvDOG2Ew1FZ2BGOoTUh_RT/exec'; // Step 2-8で取得したURL
+    
+    $post_data = array(
+        'name' => $name,
+        'furigana' => $furigana,
+        'company' => $company,
+        'email' => $email,
+        'phone' => $phone,
+        'service' => $service,
+        'message' => $message,
+        'ip' => $_SERVER['REMOTE_ADDR']
+    );
+    
+    // Google Apps Scriptに送信
+    $response = wp_remote_post($spreadsheet_url, array(
+        'body' => $post_data,
+        'timeout' => 30
+    ));
     
     // 管理者へのメール送信
     $admin_email = get_option('admin_email');
@@ -170,14 +190,14 @@ function handle_contact_form_submission() {
     }
     
     // リダイレクト
-    wp_redirect(home_url('/?contact=success'));
+    wp_redirect(home_url('/contact-thanks/'));
     exit;
 }
 add_action('admin_post_submit_contact_form', 'handle_contact_form_submission');
 add_action('admin_post_nopriv_submit_contact_form', 'handle_contact_form_submission');
 
 // お問い合わせ成功メッセージ
-function show_contact_success_message() {
+/*function show_contact_success_message() {
     if (isset($_GET['contact']) && $_GET['contact'] === 'success') {
         echo '<script>
             document.addEventListener("DOMContentLoaded", function() {
@@ -196,6 +216,7 @@ function show_contact_success_message() {
     }
 }
 add_action('wp_head', 'show_contact_success_message');
+*/
 
 // カスタマイザー設定
 function diyone_customize_register($wp_customize) {
@@ -373,4 +394,285 @@ function diyone_error_handler($errno, $errstr, $errfile, $errline) {
 }
 set_error_handler('diyone_error_handler');
 
+// ===== ポートフォリオ管理システム =====
+
+// ポートフォリオのカスタム投稿タイプを登録
+function diyone_register_portfolio_post_type() {
+    $args = array(
+        'label' => 'ポートフォリオ',
+        'labels' => array(
+            'name' => 'ポートフォリオ',
+            'singular_name' => 'ポートフォリオ',
+            'add_new' => '新規追加',
+            'add_new_item' => '新しいポートフォリオを追加',
+            'edit_item' => 'ポートフォリオを編集',
+            'new_item' => '新規ポートフォリオ',
+            'view_item' => 'ポートフォリオを表示',
+            'search_items' => 'ポートフォリオを検索',
+            'not_found' => 'ポートフォリオが見つかりません',
+            'all_items' => '全てのポートフォリオ',
+        ),
+        'public' => true,
+        'has_archive' => true,
+        'menu_icon' => 'dashicons-portfolio',
+        'supports' => array('title', 'editor', 'thumbnail', 'custom-fields'),
+        'show_in_rest' => true,
+        'rewrite' => array('slug' => 'work'),
+        'menu_position' => 20,
+        'capability_type' => 'post',
+        'hierarchical' => false,
+    );
+    register_post_type('portfolio', $args);
+}
+add_action('init', 'diyone_register_portfolio_post_type');
+
+// ポートフォリオのカテゴリータクソノミーを登録
+function diyone_register_portfolio_taxonomy() {
+    $args = array(
+        'label' => 'カテゴリー',
+        'labels' => array(
+            'name' => 'ポートフォリオカテゴリー',
+            'singular_name' => 'カテゴリー',
+            'add_new_item' => '新しいカテゴリーを追加',
+            'edit_item' => 'カテゴリーを編集',
+            'update_item' => 'カテゴリーを更新',
+            'view_item' => 'カテゴリーを表示',
+            'separate_items_with_commas' => 'カテゴリーをカンマで区切る',
+            'add_or_remove_items' => 'カテゴリーを追加または削除',
+            'choose_from_most_used' => 'よく使われるカテゴリーから選択',
+            'popular_items' => '人気のカテゴリー',
+            'search_items' => 'カテゴリーを検索',
+            'not_found' => 'カテゴリーが見つかりません',
+        ),
+        'hierarchical' => true,
+        'public' => true,
+        'show_ui' => true,
+        'show_admin_column' => true,
+        'show_in_nav_menus' => true,
+        'show_tagcloud' => true,
+        'show_in_rest' => true,
+        'rewrite' => array('slug' => 'portfolio-category'),
+    );
+    register_taxonomy('portfolio_category', 'portfolio', $args);
+}
+add_action('init', 'diyone_register_portfolio_taxonomy');
+
+// カスタムフィールドの追加
+function diyone_add_portfolio_meta_boxes() {
+    add_meta_box(
+        'portfolio_details',
+        'ポートフォリオ詳細情報',
+        'diyone_portfolio_meta_box_callback',
+        'portfolio',
+        'normal',
+        'high'
+    );
+}
+add_action('add_meta_boxes', 'diyone_add_portfolio_meta_boxes');
+
+// カスタムフィールドの表示
+function diyone_portfolio_meta_box_callback($post) {
+    wp_nonce_field('diyone_save_portfolio_meta', 'diyone_portfolio_nonce');
+    
+    $client_name = get_post_meta($post->ID, '_client_name', true);
+    $project_type = get_post_meta($post->ID, '_project_type', true);
+    $results = get_post_meta($post->ID, '_results', true);
+    $tags = get_post_meta($post->ID, '_tags', true);
+    $result_numbers = get_post_meta($post->ID, '_result_numbers', true);
+    $youtube_url = get_post_meta($post->ID, '_youtube_url', true); // 新規追加
+    $media_type = get_post_meta($post->ID, '_media_type', true);   // 新規追加
+    ?>
+    <style>
+        .portfolio-meta-table { width: 100%; border-collapse: collapse; }
+        .portfolio-meta-table th { width: 20%; padding: 10px; vertical-align: top; background: #f1f1f1; }
+        .portfolio-meta-table td { padding: 10px; }
+        .portfolio-meta-table input, .portfolio-meta-table select, .portfolio-meta-table textarea { width: 100%; }
+        .portfolio-meta-table textarea { height: 80px; resize: vertical; }
+        .youtube-preview { margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 5px; }
+        .media-type-fields { display: none; }
+        .media-type-fields.active { display: table-row; }
+    </style>
+    <table class="portfolio-meta-table">
+        <tr>
+            <th><label for="featured_on_home">トップページ表示</label></th>
+            <td>
+                <input type="checkbox" id="featured_on_home" name="featured_on_home" value="1" <?php checked($featured_on_home, '1'); ?> />
+                <label for="featured_on_home">このポートフォリオをトップページに表示する</label>
+                <p><small>チェックを入れると、トップページのポートフォリオセクションに表示されます（最大8つ）</small></p>
+            </td>
+        </tr>
+        <tr>
+            <th><label for="media_type">メディアタイプ</label></th>
+            <td>
+                <select id="media_type" name="media_type" onchange="toggleMediaFields()">
+                    <option value="image" <?php selected($media_type, 'image'); ?>>画像</option>
+                    <option value="youtube" <?php selected($media_type, 'youtube'); ?>>YouTube動画</option>
+                </select>
+                <p><small>YouTube動画を選択した場合、アイキャッチ画像はサムネイルとして使用されます</small></p>
+            </td>
+        </tr>
+        <tr class="media-type-fields youtube-field <?php echo ($media_type === 'youtube') ? 'active' : ''; ?>">
+            <th><label for="youtube_url">YouTube URL</label></th>
+            <td>
+                <input type="url" id="youtube_url" name="youtube_url" value="<?php echo esc_attr($youtube_url); ?>" placeholder="https://www.youtube.com/watch?v=xxx または https://youtu.be/xxx" />
+                <div class="youtube-preview">
+                    <p><strong>使用方法：</strong></p>
+                    <ul>
+                        <li>YouTubeの動画URLをそのまま貼り付けてください</li>
+                        <li>ポートフォリオページでクリック時にモーダルで再生されます</li>
+                        <li>アイキャッチ画像は動画のサムネイルとして表示されます</li>
+                    </ul>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <th><label for="client_name">クライアント名</label></th>
+            <td><input type="text" id="client_name" name="client_name" value="<?php echo esc_attr($client_name); ?>" placeholder="例: 製造業A社様" /></td>
+        </tr>
+        <tr>
+            <th><label for="project_type">プロジェクトタイプ</label></th>
+            <td>
+                <select id="project_type" name="project_type">
+                    <option value="">選択してください</option>
+                    <option value="video" <?php selected($project_type, 'video'); ?>>映像制作</option>
+                    <option value="design" <?php selected($project_type, 'design'); ?>>デザイン制作</option>
+                    <option value="web" <?php selected($project_type, 'web'); ?>>Web制作</option>
+                    <option value="sns" <?php selected($project_type, 'sns'); ?>>SNS運用</option>
+                    <option value="ads" <?php selected($project_type, 'ads'); ?>>広告運用</option>
+                    <option value="youtube" <?php selected($project_type, 'youtube'); ?>>YouTube運営とM&A</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <th><label for="result_numbers">成果（数値）</label></th>
+            <td><input type="text" id="result_numbers" name="result_numbers" value="<?php echo esc_attr($result_numbers); ?>" placeholder="例: 視聴完了率: 85%, 売上向上: 150%" /></td>
+        </tr>
+        <tr>
+            <th><label for="results">成果詳細説明</label></th>
+            <td><textarea id="results" name="results" placeholder="成果の詳細説明を入力してください"><?php echo esc_textarea($results); ?></textarea></td>
+        </tr>
+        <tr>
+            <th><label for="tags">タグ</label></th>
+            <td><input type="text" id="tags" name="tags" value="<?php echo esc_attr($tags); ?>" placeholder="例: 企業PR, 撮影, 編集（カンマ区切り）" /></td>
+        </tr>
+    </table>
+    <p><strong>使用方法:</strong></p>
+    <ul>
+        <li>プロジェクトタイプは表示される背景色とアイコンを決定します</li>
+        <li>成果（数値）は結果表示エリアに表示されます</li>
+        <li>タグはカンマで区切って入力してください</li>
+        <li>アイキャッチ画像を設定すると、より魅力的な表示になります</li>
+    </ul>
+    <script>
+    function toggleMediaFields() {
+        const mediaType = document.getElementById('media_type').value;
+        const youtubeField = document.querySelector('.youtube-field');
+        
+        if (mediaType === 'youtube') {
+            youtubeField.classList.add('active');
+        } else {
+            youtubeField.classList.remove('active');
+        }
+    }
+    </script>
+    <?php
+}
+
+// カスタムフィールドの保存
+function diyone_save_portfolio_meta($post_id) {
+    // セキュリティチェック
+    if (!isset($_POST['diyone_portfolio_nonce']) || !wp_verify_nonce($_POST['diyone_portfolio_nonce'], 'diyone_save_portfolio_meta')) {
+        return;
+    }
+    
+    // オートセーブ時は処理しない
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    
+    // 権限チェック
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+    
+    // フィールドの保存
+    $fields = array('client_name', 'project_type', 'results', 'tags', 'result_numbers', 'youtube_url', 'media_type', 'featured_on_home');
+    
+    foreach ($fields as $field) {
+        if (isset($_POST[$field])) {
+            $value = $_POST[$field];
+            if ($field === 'results') {
+                $value = sanitize_textarea_field($value);
+            } elseif ($field === 'youtube_url') {
+                $value = esc_url_raw($value);
+            } else {
+                $value = sanitize_text_field($value);
+            }
+            update_post_meta($post_id, '_' . $field, $value);
+        } else {
+            // チェックボックスの場合、チェックされていないときは削除
+            if ($field === 'featured_on_home') {
+                delete_post_meta($post_id, '_featured_on_home');
+            }
+        }
+    }
+}
+add_action('save_post', 'diyone_save_portfolio_meta');
+
+// 管理画面のポートフォリオ一覧にカスタムカラムを追加
+function diyone_portfolio_columns($columns) {
+    $new_columns = array();
+    $new_columns['cb'] = $columns['cb'];
+    $new_columns['title'] = $columns['title'];
+    $new_columns['client_name'] = 'クライアント名';
+    $new_columns['project_type'] = 'タイプ';
+    $new_columns['portfolio_category'] = 'カテゴリー';
+    $new_columns['date'] = $columns['date'];
+    return $new_columns;
+}
+add_filter('manage_portfolio_posts_columns', 'diyone_portfolio_columns');
+
+// カスタムカラムの内容を表示
+function diyone_portfolio_column_content($column, $post_id) {
+    switch ($column) {
+        case 'client_name':
+            echo esc_html(get_post_meta($post_id, '_client_name', true));
+            break;
+        case 'project_type':
+            $type = get_post_meta($post_id, '_project_type', true);
+            $type_labels = array(
+                'video' => '映像制作',
+                'design' => 'デザイン制作',
+                'web' => 'Web制作',
+                'sns' => 'SNS運用',
+                'ads' => '広告運用',
+                'youtube' => 'YouTube運営',
+            );
+            echo isset($type_labels[$type]) ? $type_labels[$type] : '未設定';
+            break;
+        case 'portfolio_category':
+            $terms = get_the_terms($post_id, 'portfolio_category');
+            if ($terms && !is_wp_error($terms)) {
+                $term_names = array();
+                foreach ($terms as $term) {
+                    $term_names[] = $term->name;
+                }
+                echo implode(', ', $term_names);
+            }
+            break;
+    }
+}
+add_action('manage_portfolio_posts_custom_column', 'diyone_portfolio_column_content', 10, 2);
+
+// URL書き換えルールを更新
+function diyone_flush_rewrite_rules() {
+    diyone_register_portfolio_post_type();
+    diyone_register_portfolio_taxonomy();
+    flush_rewrite_rules();
+}
+register_activation_hook(__FILE__, 'diyone_flush_rewrite_rules');
+
+// ===== ポートフォリオ管理システム終了 =====
+
 ?>
+
