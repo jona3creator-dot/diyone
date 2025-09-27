@@ -369,10 +369,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// YouTube動画モーダル機能
+// YouTube動画モーダル機能（Shorts対応版）
 document.addEventListener('DOMContentLoaded', function() {
     // YouTubeモーダルの作成
     function createYouTubeModal() {
+        if (document.getElementById('youtube-modal')) return;
+        
         const modal = document.createElement('div');
         modal.id = 'youtube-modal';
         modal.innerHTML = `
@@ -404,10 +406,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('youtube-modal');
         const iframe = document.getElementById('youtube-iframe');
         
-        // YouTube URLを埋め込み形式に変換
+        // YouTube URLを埋め込み形式に変換（Shorts対応）
         const videoId = extractYouTubeVideoId(videoUrl);
         if (videoId) {
-            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
             modal.style.display = 'block';
             document.body.style.overflow = 'hidden';
         }
@@ -423,30 +425,55 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = 'auto';
     }
     
-    // YouTube Video IDを抽出
+    // YouTube Video IDを抽出（Shorts対応）
     function extractYouTubeVideoId(url) {
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-        const match = url.match(regExp);
-        return (match && match[2].length === 11) ? match[2] : null;
+        const patterns = [
+            /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^#&?]*)/,
+            /youtube\.com\/shorts\/([^#&?]*)/,
+            /youtube\.com\/v\/([^#&?]*)/
+        ];
+        
+        for (let pattern of patterns) {
+            const match = url.match(pattern);
+            if (match && match[1].length === 11) {
+                return match[1];
+            }
+        }
+        return null;
     }
     
     // ポートフォリオアイテムにクリックイベントを追加
-    const portfolioItems = document.querySelectorAll('.portfolio-item[data-youtube-url]');
-    portfolioItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            const youtubeUrl = this.getAttribute('data-youtube-url');
-            if (youtubeUrl) {
-                openYouTubeModal(youtubeUrl);
+    function initPortfolioClicks() {
+        const portfolioItems = document.querySelectorAll('.portfolio-item[data-youtube-url]');
+        portfolioItems.forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                const youtubeUrl = this.getAttribute('data-youtube-url');
+                if (youtubeUrl) {
+                    openYouTubeModal(youtubeUrl);
+                }
+            });
+            
+            // カーソルをポインターに
+            item.style.cursor = 'pointer';
+        });
+    }
+    
+    // 初期化
+    createYouTubeModal();
+    initPortfolioClicks();
+    
+    // 動的に追加されたコンテンツにも対応
+    const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+            if (mutation.addedNodes.length > 0) {
+                initPortfolioClicks();
             }
         });
-        
-        // カーソルをポインターに
-        item.style.cursor = 'pointer';
     });
     
-    // モーダルを初期化
-    if (!document.getElementById('youtube-modal')) {
-        createYouTubeModal();
-    }
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
 });

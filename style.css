@@ -2072,3 +2072,90 @@ body {
         font-size: 1.5rem;
     }
 }
+
+/* ポートフォリオフィルター用 */
+.portfolio-item.hidden {
+    display: none;
+}
+
+/* YouTube動画用のスタイル改善 */
+.portfolio-item[data-youtube-url] {
+    position: relative;
+    cursor: pointer;
+}
+
+.portfolio-item[data-youtube-url]:hover {
+    transform: translateY(-5px);
+}
+
+.portfolio-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ソーシャルメディア用プレースホルダー */
+.social-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    position: relative;
+}
+
+.channel-placeholder {
+    background: linear-gradient(135deg, #FF0000, #CC0000);
+}
+
+.instagram-post {
+    background: linear-gradient(135deg, #E4405F, #C13584);
+}
+
+.instagram-profile {
+    background: linear-gradient(135deg, #833AB4, #C13584, #E4405F);
+}
+
+.tiktok-video {
+    background: linear-gradient(135deg, #FF0050, #00F2EA);
+}
+
+.tiktok-profile {
+    background: linear-gradient(135deg, #000000, #FF0050);
+}
+
+.social-placeholder .social-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.social-placeholder .social-text,
+.channel-placeholder .channel-text {
+    font-size: 0.9rem;
+    line-height: 1.2;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* YouTube埋め込み画像の調整 */
+.portfolio-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 0;
+}
+
+/* ホバーエフェクトの調整 */
+.portfolio-item:hover .social-placeholder {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+}
+
+.portfolio-item:hover .social-placeholder .social-icon {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}

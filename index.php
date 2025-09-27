@@ -258,51 +258,40 @@ get_header(); ?>
                         'compare' => '='
                     )
                 ),
-                'orderby' => 'date',
-                'order' => 'DESC'
+                'meta_key' => '_home_display_order',
+                'orderby' => 'meta_value_num',
+                'order' => 'ASC'
             ));
+            
+            // おすすめが設定されていない場合は最新の8つを表示
+            if (!$portfolio_query->have_posts()) {
+                wp_reset_postdata();
+                $portfolio_query = new WP_Query(array(
+                    'post_type' => 'portfolio',
+                    'posts_per_page' => 8,
+                    'orderby' => 'date',
+                    'order' => 'DESC'
+                ));
+            }
             
             if ($portfolio_query->have_posts()) :
                 while ($portfolio_query->have_posts()) : $portfolio_query->the_post();
                     $project_type = get_post_meta(get_the_ID(), '_project_type', true);
                     $client_name = get_post_meta(get_the_ID(), '_client_name', true);
-                    $results = get_post_meta(get_the_ID(), '_results', true);
-                    $result_numbers = get_post_meta(get_the_ID(), '_result_numbers', true);
                     $tags = get_post_meta(get_the_ID(), '_tags', true);
                     $media_type = get_post_meta(get_the_ID(), '_media_type', true);
                     $youtube_url = get_post_meta(get_the_ID(), '_youtube_url', true);
                     
                     // プロジェクトタイプによる背景色の設定
-                    $bg_class = '';
-                    $icon = '';
+                    $bg_class = 'video-thumb';
                     switch($project_type) {
-                        case 'video':
-                            $bg_class = 'video-thumb';
-                            $icon = '<div class="play-button">▶</div>';
-                            break;
-                        case 'design':
-                            $bg_class = 'design-thumb';
-                            $icon = '<div class="design-icon">🎨</div>';
-                            break;
-                        case 'web':
-                            $bg_class = 'web-thumb';
-                            $icon = '<div class="web-icon">💻</div>';
-                            break;
-                        case 'sns':
-                            $bg_class = 'sns-thumb';
-                            $icon = '<div class="sns-icon">📱</div>';
-                            break;
-                        case 'ads':
-                            $bg_class = 'ads-thumb';
-                            $icon = '<div class="ads-icon">📊</div>';
-                            break;
-                        case 'youtube':
-                            $bg_class = 'youtube-thumb';
-                            $icon = '<div class="play-button">▶</div>';
-                            break;
-                        default:
-                            $bg_class = 'video-thumb';
-                            $icon = '<div class="play-button">▶</div>';
+                        case 'video': $bg_class = 'video-thumb'; break;
+                        case 'design': $bg_class = 'design-thumb'; break;
+                        case 'web': $bg_class = 'web-thumb'; break;
+                        case 'sns': $bg_class = 'sns-thumb'; break;
+                        case 'ads': $bg_class = 'ads-thumb'; break;
+                        case 'youtube': $bg_class = 'youtube-thumb'; break;
+                        default: $bg_class = 'video-thumb';
                     }
                     
                     // YouTube動画の場合はdata属性を追加
@@ -313,33 +302,28 @@ get_header(); ?>
                     ?>
                     <div class="portfolio-item fade-in" <?php echo $youtube_attr; ?>>
                         <div class="portfolio-image <?php echo $bg_class; ?>">
-                            <?php if (has_post_thumbnail()): ?>
-                                <?php the_post_thumbnail('portfolio-thumb'); ?>
-                            <?php else: ?>
-                                <?php echo $icon; ?>
-                            <?php endif; ?>
-                        </div>
+    <?php 
+    $thumbnail_html = get_social_media_thumbnail($media_type, $social_url, get_the_ID());
+    echo $thumbnail_html;
+    ?>
+</div>
                         <div class="portfolio-content">
                             <h4><?php the_title(); ?></h4>
                             <?php if ($client_name): ?>
                                 <p><strong><?php echo esc_html($client_name); ?></strong></p>
                             <?php endif; ?>
-                            <p><?php echo wp_trim_words(get_the_content(), 20, '...'); ?></p>
+                            <p><?php echo wp_trim_words(get_the_content(), 15, '...'); ?></p>
                             
                             <?php if ($tags): ?>
                             <div class="portfolio-tags">
                                 <?php 
                                 $tag_array = explode(',', $tags);
-                                foreach ($tag_array as $tag): 
+                                // 最初の2つのタグのみ表示
+                                $display_tags = array_slice($tag_array, 0, 2);
+                                foreach ($display_tags as $tag): 
                                 ?>
                                 <span class="portfolio-tag"><?php echo trim($tag); ?></span>
                                 <?php endforeach; ?>
-                            </div>
-                            <?php endif; ?>
-                            
-                            <?php if ($result_numbers): ?>
-                            <div class="portfolio-results">
-                                <span class="result-item"><?php echo esc_html($result_numbers); ?></span>
                             </div>
                             <?php endif; ?>
                         </div>
@@ -348,20 +332,7 @@ get_header(); ?>
                 endwhile;
                 wp_reset_postdata();
             else:
-                // おすすめが設定されていない場合は、最新の8つを表示
-                $fallback_query = new WP_Query(array(
-                    'post_type' => 'portfolio',
-                    'posts_per_page' => 8,
-                    'orderby' => 'date',
-                    'order' => 'DESC'
-                ));
-                
-                if ($fallback_query->have_posts()) :
-                    while ($fallback_query->have_posts()) : $fallback_query->the_post();
-                        // 上記と同じ表示処理...
-                    endwhile;
-                    wp_reset_postdata();
-                endif;
+                echo '<p>ポートフォリオが見つかりません。</p>';
             endif;
             ?>
         </div>
@@ -371,7 +342,7 @@ get_header(); ?>
             <a href="<?php echo esc_url(home_url('/portfolio')); ?>" class="cta-button">もっと見る</a>
         </div>
     </div>
-    </section>
+</section>
 
         <!-- もっと見るボタン -->
         <div class="more-portfolio">

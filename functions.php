@@ -479,8 +479,10 @@ function diyone_portfolio_meta_box_callback($post) {
     $results = get_post_meta($post->ID, '_results', true);
     $tags = get_post_meta($post->ID, '_tags', true);
     $result_numbers = get_post_meta($post->ID, '_result_numbers', true);
-    $youtube_url = get_post_meta($post->ID, '_youtube_url', true); // 新規追加
-    $media_type = get_post_meta($post->ID, '_media_type', true);   // 新規追加
+    $social_url = get_post_meta($post->ID, '_social_url', true);
+    $media_type = get_post_meta($post->ID, '_media_type', true) ?: 'image';
+    $featured_on_home = get_post_meta($post->ID, '_featured_on_home', true);
+    $home_display_order = get_post_meta($post->ID, '_home_display_order', true) ?: '1';
     ?>
     <style>
         .portfolio-meta-table { width: 100%; border-collapse: collapse; }
@@ -488,47 +490,57 @@ function diyone_portfolio_meta_box_callback($post) {
         .portfolio-meta-table td { padding: 10px; }
         .portfolio-meta-table input, .portfolio-meta-table select, .portfolio-meta-table textarea { width: 100%; }
         .portfolio-meta-table textarea { height: 80px; resize: vertical; }
-        .youtube-preview { margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 5px; }
-        .media-type-fields { display: none; }
-        .media-type-fields.active { display: table-row; }
+        .social-preview { margin-top: 10px; padding: 10px; background: #f9f9f9; border-radius: 5px; }
+        .social-field { display: none; }
+        .social-field.active { display: table-row; }
+        .featured-order-field { display: none; }
+        .featured-order-field.active { display: table-row; }
     </style>
+    
     <table class="portfolio-meta-table">
-        <tr>
-            <th><label for="featured_on_home">トップページ表示</label></th>
-            <td>
-                <input type="checkbox" id="featured_on_home" name="featured_on_home" value="1" <?php checked($featured_on_home, '1'); ?> />
-                <label for="featured_on_home">このポートフォリオをトップページに表示する</label>
-                <p><small>チェックを入れると、トップページのポートフォリオセクションに表示されます（最大8つ）</small></p>
-            </td>
-        </tr>
         <tr>
             <th><label for="media_type">メディアタイプ</label></th>
             <td>
                 <select id="media_type" name="media_type" onchange="toggleMediaFields()">
-                    <option value="image" <?php selected($media_type, 'image'); ?>>画像</option>
-                    <option value="youtube" <?php selected($media_type, 'youtube'); ?>>YouTube動画</option>
+                    <option value="image" <?php selected($media_type, 'image'); ?>>画像のみ</option>
+                    <option value="youtube_video" <?php selected($media_type, 'youtube_video'); ?>>YouTube動画</option>
+                    <option value="youtube_channel" <?php selected($media_type, 'youtube_channel'); ?>>YouTubeチャンネル</option>
+                    <option value="instagram_account" <?php selected($media_type, 'instagram_account'); ?>>Instagramアカウント</option>
+                    <option value="instagram_post" <?php selected($media_type, 'instagram_post'); ?>>Instagram投稿</option>
+                    <option value="instagram_reel" <?php selected($media_type, 'instagram_reel'); ?>>Instagramリール</option>
+                    <option value="tiktok_account" <?php selected($media_type, 'tiktok_account'); ?>>TikTokアカウント</option>
+                    <option value="tiktok_video" <?php selected($media_type, 'tiktok_video'); ?>>TikTok動画</option>
                 </select>
-                <p><small>YouTube動画を選択した場合、アイキャッチ画像はサムネイルとして使用されます</small></p>
+                <p><small>ソーシャルメディアを選択した場合、アイキャッチ画像は自動で適切な表示に変わります</small></p>
             </td>
         </tr>
-        <tr class="media-type-fields youtube-field <?php echo ($media_type === 'youtube') ? 'active' : ''; ?>">
-            <th><label for="youtube_url">YouTube URL</label></th>
+        
+        <tr class="social-field <?php echo ($media_type !== 'image') ? 'active' : ''; ?>">
+            <th><label for="social_url">ソーシャルメディアURL</label></th>
             <td>
-                <input type="url" id="youtube_url" name="youtube_url" value="<?php echo esc_attr($youtube_url); ?>" placeholder="https://www.youtube.com/watch?v=xxx または https://youtu.be/xxx" />
-                <div class="youtube-preview">
-                    <p><strong>使用方法：</strong></p>
+                <input type="url" id="social_url" name="social_url" value="<?php echo esc_attr($social_url); ?>" placeholder="URLを入力してください" />
+                <div class="social-preview">
+                    <p><strong>対応URL形式：</strong></p>
                     <ul>
-                        <li>YouTubeの動画URLをそのまま貼り付けてください</li>
-                        <li>ポートフォリオページでクリック時にモーダルで再生されます</li>
-                        <li>アイキャッチ画像は動画のサムネイルとして表示されます</li>
+                        <li><strong>YouTube動画:</strong> https://www.youtube.com/watch?v=xxxxx または https://youtu.be/xxxxx</li>
+                        <li><strong>YouTube Shorts:</strong> https://www.youtube.com/shorts/xxxxx</li>
+                        <li><strong>YouTubeチャンネル:</strong> https://www.youtube.com/channel/xxxxx または https://www.youtube.com/@username</li>
+                        <li><strong>Instagram投稿:</strong> https://www.instagram.com/p/xxxxx/</li>
+                        <li><strong>Instagramリール:</strong> https://www.instagram.com/reel/xxxxx/</li>
+                        <li><strong>Instagramアカウント:</strong> https://www.instagram.com/username/</li>
+                        <li><strong>TikTok動画:</strong> https://www.tiktok.com/@username/video/xxxxx</li>
+                        <li><strong>TikTokアカウント:</strong> https://www.tiktok.com/@username</li>
                     </ul>
+                    <p><strong>注意:</strong> アイキャッチ画像を設定すると、そちらが優先表示されます。自動アイコンを使いたい場合はアイキャッチ画像を設定しないでください。</p>
                 </div>
             </td>
         </tr>
+        
         <tr>
             <th><label for="client_name">クライアント名</label></th>
             <td><input type="text" id="client_name" name="client_name" value="<?php echo esc_attr($client_name); ?>" placeholder="例: 製造業A社様" /></td>
         </tr>
+        
         <tr>
             <th><label for="project_type">プロジェクトタイプ</label></th>
             <td>
@@ -543,74 +555,97 @@ function diyone_portfolio_meta_box_callback($post) {
                 </select>
             </td>
         </tr>
+        
         <tr>
             <th><label for="result_numbers">成果（数値）</label></th>
             <td><input type="text" id="result_numbers" name="result_numbers" value="<?php echo esc_attr($result_numbers); ?>" placeholder="例: 視聴完了率: 85%, 売上向上: 150%" /></td>
         </tr>
+        
         <tr>
             <th><label for="results">成果詳細説明</label></th>
             <td><textarea id="results" name="results" placeholder="成果の詳細説明を入力してください"><?php echo esc_textarea($results); ?></textarea></td>
         </tr>
+        
         <tr>
             <th><label for="tags">タグ</label></th>
             <td><input type="text" id="tags" name="tags" value="<?php echo esc_attr($tags); ?>" placeholder="例: 企業PR, 撮影, 編集（カンマ区切り）" /></td>
         </tr>
+        
+        <tr>
+            <th><label for="featured_on_home">トップページ表示</label></th>
+            <td>
+                <input type="checkbox" id="featured_on_home" name="featured_on_home" value="1" <?php checked($featured_on_home, '1'); ?> />
+                <label for="featured_on_home">このポートフォリオをトップページに表示する</label>
+                <p><small>チェックを入れると、トップページのポートフォリオセクションに表示されます（最大8つ）</small></p>
+            </td>
+        </tr>
+
+        <tr class="featured-order-field <?php echo $featured_on_home ? 'active' : ''; ?>">
+            <th><label for="home_display_order">表示順序</label></th>
+            <td>
+                <input type="number" id="home_display_order" name="home_display_order" value="<?php echo esc_attr($home_display_order); ?>" min="1" max="8" />
+                <p><small>1-8の数字で表示順序を指定（1が最初）</small></p>
+            </td>
+        </tr>
     </table>
-    <p><strong>使用方法:</strong></p>
-    <ul>
-        <li>プロジェクトタイプは表示される背景色とアイコンを決定します</li>
-        <li>成果（数値）は結果表示エリアに表示されます</li>
-        <li>タグはカンマで区切って入力してください</li>
-        <li>アイキャッチ画像を設定すると、より魅力的な表示になります</li>
-    </ul>
+    
     <script>
     function toggleMediaFields() {
         const mediaType = document.getElementById('media_type').value;
-        const youtubeField = document.querySelector('.youtube-field');
+        const socialField = document.querySelector('.social-field');
         
-        if (mediaType === 'youtube') {
-            youtubeField.classList.add('active');
+        if (mediaType !== 'image') {
+            socialField.classList.add('active');
         } else {
-            youtubeField.classList.remove('active');
+            socialField.classList.remove('active');
         }
     }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleMediaFields();
+        
+        document.getElementById('featured_on_home').addEventListener('change', function() {
+            const orderField = document.querySelector('.featured-order-field');
+            if (this.checked) {
+                orderField.classList.add('active');
+            } else {
+                orderField.classList.remove('active');
+            }
+        });
+    });
     </script>
     <?php
 }
 
-// カスタムフィールドの保存
 function diyone_save_portfolio_meta($post_id) {
     // セキュリティチェック
     if (!isset($_POST['diyone_portfolio_nonce']) || !wp_verify_nonce($_POST['diyone_portfolio_nonce'], 'diyone_save_portfolio_meta')) {
         return;
     }
     
-    // オートセーブ時は処理しない
     if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
         return;
     }
     
-    // 権限チェック
     if (!current_user_can('edit_post', $post_id)) {
         return;
     }
     
-    // フィールドの保存
-    $fields = array('client_name', 'project_type', 'results', 'tags', 'result_numbers', 'youtube_url', 'media_type', 'featured_on_home');
+    // フィールドの保存（social_urlに変更）
+    $fields = array('client_name', 'project_type', 'results', 'tags', 'result_numbers', 'social_url', 'media_type', 'featured_on_home', 'home_display_order');
     
     foreach ($fields as $field) {
         if (isset($_POST[$field])) {
             $value = $_POST[$field];
             if ($field === 'results') {
                 $value = sanitize_textarea_field($value);
-            } elseif ($field === 'youtube_url') {
+            } elseif ($field === 'social_url') {
                 $value = esc_url_raw($value);
             } else {
                 $value = sanitize_text_field($value);
             }
             update_post_meta($post_id, '_' . $field, $value);
         } else {
-            // チェックボックスの場合、チェックされていないときは削除
             if ($field === 'featured_on_home') {
                 delete_post_meta($post_id, '_featured_on_home');
             }
@@ -673,6 +708,100 @@ function diyone_flush_rewrite_rules() {
 register_activation_hook(__FILE__, 'diyone_flush_rewrite_rules');
 
 // ===== ポートフォリオ管理システム終了 =====
+
+// サムネイル自動取得関数
+function get_social_media_thumbnail($media_type, $social_url, $post_id) {
+    // アイキャッチ画像が設定されている場合は優先
+    if (has_post_thumbnail($post_id)) {
+        return get_the_post_thumbnail($post_id, 'medium');
+    }
+    
+    // メディアタイプ別のサムネイル取得
+    switch($media_type) {
+        case 'youtube_video':
+            return get_youtube_thumbnail($social_url);
+        case 'youtube_channel':
+            return get_youtube_channel_thumbnail($social_url);
+        case 'instagram_post':
+        case 'instagram_reel':
+            return get_instagram_thumbnail($social_url);
+        case 'instagram_account':
+            return get_instagram_profile_image($social_url);
+        case 'tiktok_video':
+            return get_tiktok_thumbnail($social_url);
+        case 'tiktok_account':
+            return get_tiktok_profile_image($social_url);
+        default:
+            return get_social_media_icon($media_type, $social_url);
+    }
+}
+
+// YouTube動画サムネイル取得
+function get_youtube_thumbnail($url) {
+    $video_id = extract_youtube_video_id($url);
+    if ($video_id) {
+        $thumbnail_url = "https://img.youtube.com/vi/{$video_id}/maxresdefault.jpg";
+        return '<img src="' . esc_url($thumbnail_url) . '" alt="YouTube Thumbnail" style="width:100%;height:100%;object-fit:cover;" onerror="this.src=\'https://img.youtube.com/vi/' . $video_id . '/hqdefault.jpg\'">';
+    }
+    return '<div class="social-icon youtube-icon">📺</div>';
+}
+
+// YouTubeチャンネルサムネイル（プレースホルダー）
+function get_youtube_channel_thumbnail($url) {
+    // チャンネル画像はAPI必須のため、プレースホルダー使用
+    return '<div class="channel-placeholder youtube-channel">
+                <div class="channel-icon">📺</div>
+                <div class="channel-text">YouTube<br>Channel</div>
+            </div>';
+}
+
+// Instagram投稿サムネイル（プレースホルダー）
+function get_instagram_thumbnail($url) {
+    return '<div class="social-placeholder instagram-post">
+                <div class="social-icon">📸</div>
+                <div class="social-text">Instagram<br>Post</div>
+            </div>';
+}
+
+// Instagramプロフィール画像（プレースホルダー）
+function get_instagram_profile_image($url) {
+    return '<div class="social-placeholder instagram-profile">
+                <div class="social-icon">👤</div>
+                <div class="social-text">Instagram<br>Profile</div>
+            </div>';
+}
+
+// TikTok動画サムネイル（プレースホルダー）
+function get_tiktok_thumbnail($url) {
+    return '<div class="social-placeholder tiktok-video">
+                <div class="social-icon">🎵</div>
+                <div class="social-text">TikTok<br>Video</div>
+            </div>';
+}
+
+// TikTokプロフィール画像（プレースホルダー）
+function get_tiktok_profile_image($url) {
+    return '<div class="social-placeholder tiktok-profile">
+                <div class="social-icon">👤</div>
+                <div class="social-text">TikTok<br>Profile</div>
+            </div>';
+}
+
+// YouTube Video ID抽出関数
+function extract_youtube_video_id($url) {
+    $patterns = [
+        '/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^#&?]*)/',
+        '/youtube\.com\/shorts\/([^#&?]*)/',
+        '/youtube\.com\/v\/([^#&?]*)/'
+    ];
+    
+    foreach ($patterns as $pattern) {
+        if (preg_match($pattern, $url, $matches)) {
+            return $matches[1];
+        }
+    }
+    return false;
+}
 
 ?>
 
