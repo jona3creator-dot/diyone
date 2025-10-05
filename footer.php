@@ -1,7 +1,6 @@
 <?php
 /**
- * Footer template - DIYONE Corporate Website (ver.1.1.0)
- * 最新版：重複削除、構造最適化
+ * Footer template
  */
 ?>
     </div><!-- #page -->
@@ -35,7 +34,6 @@
                         <ul>
                             <li><a href="<?php echo esc_url(home_url('/#company')); ?>">会社概要</a></li>
                             <li><a href="<?php echo esc_url(home_url('/#contact')); ?>">お問い合わせ</a></li>
-                            <li><a href="<?php echo esc_url(get_permalink(get_page_by_path('privacy'))); ?>">プライバシーポリシー</a></li>
                         </ul>
                     </div>
                 </div>
@@ -46,12 +44,10 @@
             </div>
         </div>
     </footer>
-    
     <!-- 上に戻るボタン -->
     <a href="#" class="back-to-top" id="back-to-top">
         ↑
     </a>
-    
     <?php wp_footer(); ?>
 </body>
 </html>

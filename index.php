@@ -1,7 +1,6 @@
 <?php
 /**
- * The main template file - DIYONE Corporate Website (ver.1.1.1)
- * 最新版：重複削除、JavaScriptコンフリクト修正、完全版
+ * The main template file - DIYONE Corporate Website (修正版)
  */
 get_header(); ?>
 
@@ -209,7 +208,7 @@ get_header(); ?>
         </div>
     </section>
 
-    <!-- 強み -->
+    <!-- 強み（3つに変更） -->
     <section id="strengths" class="section strengths">
         <div class="strengths-container">
             <div class="container">
@@ -239,119 +238,142 @@ get_header(); ?>
         </div>
     </section>
 
-    <!-- 実績 -->
+    <!-- 実績（Portfolio） -->
     <section id="portfolio" class="section portfolio">
         <div class="container">
             <h2 class="section-title fade-in">Portfolio</h2>
             <p class="section-subtitle fade-in">これまでの制作実績をご紹介</p>
-        
-        <div class="portfolio-grid">
-            <?php
-            // おすすめのポートフォリオを取得
-            $portfolio_query = new WP_Query(array(
-                'post_type' => 'portfolio',
-                'posts_per_page' => 8,
-                'meta_query' => array(
-                    array(
-                        'key' => '_featured_on_home',
-                        'value' => '1',
-                        'compare' => '='
-                    )
-                ),
-                'meta_key' => '_home_display_order',
-                'orderby' => 'meta_value_num',
-                'order' => 'ASC'
-            ));
             
-            // おすすめが設定されていない場合は最新の8つを表示
-            if (!$portfolio_query->have_posts()) {
-                wp_reset_postdata();
-                $portfolio_query = new WP_Query(array(
-                    'post_type' => 'portfolio',
-                    'posts_per_page' => 8,
-                    'orderby' => 'date',
-                    'order' => 'DESC'
-                ));
-            }
-            
-            if ($portfolio_query->have_posts()) :
-                while ($portfolio_query->have_posts()) : $portfolio_query->the_post();
-                    $project_type = get_post_meta(get_the_ID(), '_project_type', true);
-                    $client_name = get_post_meta(get_the_ID(), '_client_name', true);
-                    $tags = get_post_meta(get_the_ID(), '_tags', true);
-                    $media_type = get_post_meta(get_the_ID(), '_media_type', true);
-                    $youtube_url = get_post_meta(get_the_ID(), '_youtube_url', true);
-                    
-                    // プロジェクトタイプによる背景色の設定
-                    $bg_class = 'video-thumb';
-                    switch($project_type) {
-                        case 'video': $bg_class = 'video-thumb'; break;
-                        case 'design': $bg_class = 'design-thumb'; break;
-                        case 'web': $bg_class = 'web-thumb'; break;
-                        case 'sns': $bg_class = 'sns-thumb'; break;
-                        case 'ads': $bg_class = 'ads-thumb'; break;
-                        case 'youtube': $bg_class = 'youtube-thumb'; break;
-                        default: $bg_class = 'video-thumb';
-                    }
-                    
-                    // YouTube動画の場合はdata属性を追加
-                    $youtube_attr = '';
-                    if ($media_type === 'youtube' && $youtube_url) {
-                        $youtube_attr = 'data-youtube-url="' . esc_attr($youtube_url) . '"';
-                    }
-                    ?>
-                    <div class="portfolio-item fade-in" <?php echo $youtube_attr; ?>>
-                        <div class="portfolio-image <?php echo $bg_class; ?>">
-    <?php 
-    $thumbnail_html = get_social_media_thumbnail($media_type, $social_url, get_the_ID());
-    echo $thumbnail_html;
-    ?>
-</div>
-                        <div class="portfolio-content">
-                            <h4><?php the_title(); ?></h4>
-                            <?php if ($client_name): ?>
-                                <p><strong><?php echo esc_html($client_name); ?></strong></p>
-                            <?php endif; ?>
-                            <p><?php echo wp_trim_words(get_the_content(), 15, '...'); ?></p>
-                            
-                            <?php if ($tags): ?>
-                            <div class="portfolio-tags">
-                                <?php 
-                                $tag_array = explode(',', $tags);
-                                // 最初の2つのタグのみ表示
-                                $display_tags = array_slice($tag_array, 0, 2);
-                                foreach ($display_tags as $tag): 
-                                ?>
-                                <span class="portfolio-tag"><?php echo trim($tag); ?></span>
-                                <?php endforeach; ?>
-                            </div>
-                            <?php endif; ?>
+            <div class="portfolio-grid">
+                <!-- YouTube動画制作 -->
+                <div class="portfolio-item fade-in">
+                    <div class="portfolio-image video-thumb">
+                        <div class="play-button">▶</div>
+                    </div>
+                    <div class="portfolio-content">
+                        <h4>企業PR動画制作</h4>
+                        <p>BtoB企業向けの会社紹介動画を制作。視聴完了率85%を達成</p>
+                        <div class="portfolio-tags">
+                            <span class="portfolio-tag">映像制作</span>
+                            <span class="portfolio-tag">企業PR</span>
                         </div>
                     </div>
-                    <?php
-                endwhile;
-                wp_reset_postdata();
-            else:
-                echo '<p>ポートフォリオが見つかりません。</p>';
-            endif;
-            ?>
-        </div>
+                </div>
 
-        <!-- もっと見るボタン -->
-        <div class="more-portfolio">
-            <a href="<?php echo esc_url(home_url('/portfolio')); ?>" class="cta-button">もっと見る</a>
-        </div>
-    </div>
-</section>
+                <!-- デザイン制作 -->
+                <div class="portfolio-item fade-in">
+                    <div class="portfolio-image design-thumb">
+                        <div class="design-icon">🎨</div>
+                    </div>
+                    <div class="portfolio-content">
+                        <h4>ブランドロゴデザイン</h4>
+                        <p>スタートアップ企業のロゴ・CI設計を担当。ブランド認知度40%向上</p>
+                        <div class="portfolio-tags">
+                            <span class="portfolio-tag">ブランディング</span>
+                            <span class="portfolio-tag">ロゴ制作</span>
+                        </div>
+                    </div>
+                </div>
 
-        <!-- もっと見るボタン -->
-        <div class="more-portfolio">
-            <a href="<?php echo esc_url(home_url('/portfolio')); ?>" class="cta-button">もっと見る</a>
-        </div>
-    </div>
-</section>
+                <!-- プレゼン資料 -->
+                <div class="portfolio-item fade-in">
+                    <div class="portfolio-image presentation-thumb">
+                        <div class="presentation-icon">📊</div>
+                    </div>
+                    <div class="portfolio-content">
+                        <h4>営業資料作成</h4>
+                        <p>プレゼンテーション資料を戦略的に設計。成約率30%向上に貢献</p>
+                        <div class="portfolio-tags">
+                            <span class="portfolio-tag">資料作成</span>
+                            <span class="portfolio-tag">営業支援</span>
+                        </div>
+                    </div>
+                </div>
 
-    <!-- お客様の声 -->
+                <!-- SNS運用 -->
+                <div class="portfolio-item fade-in">
+                    <div class="portfolio-image sns-thumb">
+                        <div class="sns-icon">📱</div>
+                    </div>
+                    <div class="portfolio-content">
+                        <h4>Instagram運用代行</h4>
+                        <p>カフェのInstagramアカウント運用。フォロワー数を6ヶ月で3倍に増加</p>
+                        <div class="portfolio-tags">
+                            <span class="portfolio-tag">SNS運用</span>
+                            <span class="portfolio-tag">Instagram</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Web制作 -->
+                <div class="portfolio-item fade-in">
+                    <div class="portfolio-image web-thumb">
+                        <div class="web-icon">💻</div>
+                    </div>
+                    <div class="portfolio-content">
+                        <h4>コーポレートサイト</h4>
+                        <p>建設会社のコーポレートサイトをWordPressで制作。お問い合わせ数200%向上</p>
+                        <div class="portfolio-tags">
+                            <span class="portfolio-tag">Web制作</span>
+                            <span class="portfolio-tag">WordPress</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- YouTube運営 -->
+                <div class="portfolio-item fade-in">
+                    <div class="portfolio-image youtube-thumb">
+                        <div class="play-button">▶</div>
+                    </div>
+                    <div class="portfolio-content">
+                        <h4>YouTubeチャンネル運営</h4>
+                        <p>教育系YouTubeチャンネル立ち上げ。チャンネル登録者1万人達成</p>
+                        <div class="portfolio-tags">
+                            <span class="portfolio-tag">YouTube運営</span>
+                            <span class="portfolio-tag">教育コンテンツ</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 広告運用 -->
+                <div class="portfolio-item fade-in">
+                    <div class="portfolio-image ad-thumb">
+                        <div class="ad-icon">📊</div>
+                    </div>
+                    <div class="portfolio-content">
+                        <h4>Meta広告運用</h4>
+                        <p>ECサイトのMeta広告を運用。ROAS300%を達成し売上大幅向上</p>
+                        <div class="portfolio-tags">
+                            <span class="portfolio-tag">広告運用</span>
+                            <span class="portfolio-tag">Meta広告</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- オンライン事務 -->
+                <div class="portfolio-item fade-in">
+                    <div class="portfolio-image office-thumb">
+                        <div class="office-icon">💼</div>
+                    </div>
+                    <div class="portfolio-content">
+                        <h4>データ入力・整理</h4>
+                        <p>大手企業の顧客データベース整理。作業効率を50%向上させました</p>
+                        <div class="portfolio-tags">
+                            <span class="portfolio-tag">オンライン事務</span>
+                            <span class="portfolio-tag">データ整理</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- もっと見るボタン -->
+            <div class="more-portfolio">
+                <a href="https://diyone.net/portfolio" class="cta-button">もっと見る</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- お客様の声（スライド形式） -->
     <section id="testimonials" class="section testimonials">
         <div class="container">
             <h2 class="section-title fade-in">Testimonials</h2>
@@ -461,6 +483,47 @@ get_header(); ?>
                         <span class="dot" data-slide="4"></span>
                     </div>
                     <button class="slider-btn next" aria-label="次へ">›</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Give & Take セクション（非表示） -->
+    <section id="give-take" class="section give-take" style="display: none;">
+        <div class="container">
+            <div class="give-take-hero">
+                <div class="give-take-content">
+                    <h2>Give & Take</h2>
+                    <div class="subtitle">
+                        スキルシェアプラットフォーム
+                        <span class="coming-soon-badge">Coming Soon</span>
+                    </div>
+                    <p>クリエイターとクライアントをつなぐ新しいプラットフォームを準備中です。あなたのスキルを活かして、新しい働き方を始めませんか？</p>
+                    
+                    <div class="give-take-features">
+                        <div class="feature-item">
+                            <div class="feature-icon">🎨</div>
+                            <div class="feature-title">クリエイター登録</div>
+                            <div class="feature-desc">あなたのスキルを登録</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🤝</div>
+                            <div class="feature-title">マッチング</div>
+                            <div class="feature-desc">最適なプロジェクトをご紹介</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">💰</div>
+                            <div class="feature-title">収益化</div>
+                            <div class="feature-desc">スキルを収入に変換</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📈</div>
+                            <div class="feature-title">成長サポート</div>
+                            <div class="feature-desc">スキルアップ支援</div>
+                        </div>
+                    </div>
+                    
+                    <a href="#contact" class="cta-button">事前登録はこちら</a>
                 </div>
             </div>
         </div>
@@ -578,12 +641,408 @@ get_header(); ?>
                     </tr>
                     <tr>
                         <th>メールアドレス</th>
-                        <td>diyone001@gmail.com</td>
+                        <td><a href="mailto:diyone001@gmail.com" class="email-link">diyone001@gmail.com</a></td>
                     </tr>
                 </table>
             </div>
         </div>
     </section>
 </main>
+
+<style>
+/* サービスカード開閉の修正 */
+.service-toggle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    transition: transform 0.3s ease;
+    cursor: pointer;
+}
+
+.service-card.active .service-toggle {
+    transform: rotate(45deg);
+}
+
+.service-card.active .service-toggle::after {
+    content: '-';
+}
+
+/* ポートフォリオセクション */
+.portfolio {
+    background: 
+        linear-gradient(135deg, rgba(255, 215, 0, 0.03) 0%, rgba(255, 165, 0, 0.03) 100%),
+        linear-gradient(45deg, #fafafa 0%, #ffffff 50%, #f5f5f5 100%);
+    position: relative;
+}
+
+.portfolio-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.portfolio-item {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.portfolio-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(255, 215, 0, 0.2);
+}
+
+.portfolio-image {
+    height: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-size: 1.5rem;
+    color: white;
+    font-weight: bold;
+}
+
+.video-thumb {
+    background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+}
+
+.design-thumb {
+    background: linear-gradient(135deg, #4ECDC4, #6FDDDD);
+}
+
+.presentation-thumb {
+    background: linear-gradient(135deg, #A8E6CF, #C3F0CA);
+}
+
+.sns-thumb {
+    background: linear-gradient(135deg, #FFD93D, #FFE066);
+}
+
+.web-thumb {
+    background: linear-gradient(135deg, #FF8C42, #FFAB66);
+}
+
+.youtube-thumb {
+    background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
+}
+
+.ad-thumb {
+    background: linear-gradient(135deg, #6C5CE7, #A29BFE);
+}
+
+.office-thumb {
+    background: linear-gradient(135deg, #00B894, #00CEC9);
+}
+
+.play-button,
+.design-icon,
+.presentation-icon,
+.sns-icon,
+.web-icon,
+.ad-icon,
+.office-icon {
+    font-size: 2rem;
+}
+
+.portfolio-content {
+    padding: 1.5rem;
+}
+
+.portfolio-content h4 {
+    margin-bottom: 0.8rem;
+    color: #333;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.portfolio-content p {
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.portfolio-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.portfolio-tag {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: white;
+    padding: 0.25rem 0.7rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.more-portfolio {
+    text-align: center;
+    margin-top: 2rem;
+}
+
+/* お客様の声スライダー */
+.testimonials-slider {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.testimonial-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.testimonial-item {
+    background: white;
+    padding: 3rem 2rem 2rem;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: none;
+    margin: 0 1rem;
+}
+
+.testimonial-item.active {
+    display: block;
+}
+
+.testimonial-content {
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.quote {
+    font-size: 4rem;
+    color: #FFD700;
+    position: absolute;
+    top: -2rem;
+    left: -0.5rem;
+    font-family: serif;
+    opacity: 0.3;
+    line-height: 1;
+}
+
+.testimonial-content p {
+    color: #333;
+    line-height: 1.8;
+    font-style: italic;
+    margin-left: 2rem;
+    font-size: 1.1rem;
+}
+
+.testimonial-author {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-left: 2rem;
+}
+
+.author-avatar {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.author-info .author-name {
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 0.2rem;
+    font-size: 1.1rem;
+}
+
+.author-info .author-company {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.3rem;
+}
+
+.author-info .author-service {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: white;
+    padding: 0.2rem 0.8rem;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    display: inline-block;
+}
+
+.slider-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.slider-btn {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.slider-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.slider-dots {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #ddd;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.dot.active {
+    background: #FFD700;
+    transform: scale(1.3);
+}
+
+/* プライバシーポリシーの箇条書き修正 */
+.privacy-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 1rem 0;
+}
+
+.privacy-list li {
+    padding: 0.2rem 0;
+    color: #666;
+    position: relative;
+    padding-left: 1rem;
+}
+
+.privacy-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #FFD700;
+    font-weight: bold;
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+    .portfolio-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(8, 1fr);
+    }
+    
+    .testimonial-item {
+        padding: 2rem 1.5rem;
+        margin: 0 0.5rem;
+    }
+    
+    .testimonial-content p {
+        font-size: 1rem;
+        margin-left: 1rem;
+    }
+    
+    .testimonial-author {
+        margin-left: 1rem;
+    }
+    
+    .slider-nav {
+        gap: 1rem;
+    }
+}
+</style>
+
+<script>
+// サービスカード開閉機能（個別対応）
+document.addEventListener('DOMContentLoaded', function() {
+    const serviceCards = document.querySelectorAll('.service-card');
+    
+    serviceCards.forEach(card => {
+        const toggle = card.querySelector('.service-toggle');
+        
+        card.addEventListener('click', function(e) {
+            // 他のカードを閉じる
+            serviceCards.forEach(otherCard => {
+                if (otherCard !== card) {
+                    otherCard.classList.remove('active');
+                    const otherToggle = otherCard.querySelector('.service-toggle');
+                    otherToggle.textContent = '+';
+                }
+            });
+            
+            // クリックしたカードを開閉
+            this.classList.toggle('active');
+            if (this.classList.contains('active')) {
+                toggle.textContent = '−';
+            } else {
+                toggle.textContent = '+';
+            }
+        });
+    });
+
+    // お客様の声スライダー
+    let currentSlide = 0;
+    const testimonials = document.querySelectorAll('.testimonial-item');
+    const dots = document.querySelectorAll('.dot');
+    const totalSlides = testimonials.length;
+
+    function showSlide(index) {
+        testimonials.forEach((testimonial, i) => {
+            testimonial.classList.toggle('active', i === index);
+        });
+        
+        dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === index);
+        });
+    }
+
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        showSlide(currentSlide);
+    }
+
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+        showSlide(currentSlide);
+    }
+
+    // ナビゲーションボタン
+    document.querySelector('.slider-btn.next').addEventListener('click', nextSlide);
+    document.querySelector('.slider-btn.prev').addEventListener('click', prevSlide);
+
+    // ドットナビゲーション
+    dots.forEach((dot, index) => {
+        dot.addEventListener('click', () => {
+            currentSlide = index;
+            showSlide(currentSlide);
+        });
+    });
+
+    // 自動スライド（5秒間隔）
+    setInterval(nextSlide, 5000);
+});
+</script>
 
 <?php get_footer(); ?>

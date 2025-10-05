@@ -1,11 +1,10 @@
 /*
 Theme Name: DIYONE Corporate
 Description: DIYONEコーポレートサイト専用テーマ
-Version: 1.1.6
+Version: 1.0.0
 Author: DIYONE
 */
 
-/* リセット・基本設定 */
 * {
     margin: 0;
     padding: 0;
@@ -135,6 +134,7 @@ body {
     transform: translateX(100%);
     transition: transform 0.3s ease;
     padding: 2rem;
+    position: relative;
     padding-top: 4rem;
 }
 
@@ -210,14 +210,8 @@ body {
 }
 
 @keyframes creativePulse {
-    0%, 100% { 
-        transform: translate(0, 0) scale(1); 
-        opacity: 0.4; 
-    }
-    50% { 
-        transform: translate(-10px, -10px) scale(1.05); 
-        opacity: 0.8; 
-    }
+    0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.4; }
+    50% { transform: translate(-10px, -10px) scale(1.05); opacity: 0.8; }
 }
 
 .hero-content {
@@ -225,14 +219,6 @@ body {
     z-index: 2;
     position: relative;
     padding: 2rem;
-}
-
-.hero-subtitle {
-    font-size: 1.2rem;
-    color: #FFA500;
-    margin-bottom: 1.5rem;
-    font-weight: 600;
-    letter-spacing: 1px;
 }
 
 .hero h1 {
@@ -253,6 +239,14 @@ body {
     font-weight: 400;
 }
 
+.hero-subtitle {
+    font-size: 1.2rem;
+    color: #FFA500;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
 /* セクション共通 */
 .section {
     padding: 5rem 0;
@@ -266,10 +260,9 @@ body {
 
 .section-title {
     text-align: center;
-    font-size: 3rem;
+    font-size: 2.5rem;
     margin-bottom: 1rem;
     color: #333;
-    font-weight: 700;
 }
 
 .section-subtitle {
@@ -287,7 +280,6 @@ body {
     background: #f8f9fa;
 }
 
-/* サービスカード - 究極修正版：根本的解決 */
 .services-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -299,12 +291,9 @@ body {
     background: white;
     border-radius: 15px;
     overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    transition: all 0.3s ease;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
     cursor: pointer;
-    position: relative;
-    /* 重要：独立した要素として扱う */
-    contain: layout style;
 }
 
 .service-card:hover {
@@ -319,14 +308,12 @@ body {
     justify-content: space-between;
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
     border-bottom: 1px solid rgba(255, 215, 0, 0.1);
-    position: relative;
 }
 
 .service-info {
     display: flex;
     align-items: center;
     gap: 1rem;
-    flex: 1;
 }
 
 .service-icon {
@@ -339,7 +326,6 @@ body {
     justify-content: center;
     color: white;
     font-size: 1.3rem;
-    flex-shrink: 0;
 }
 
 .service-title {
@@ -359,52 +345,23 @@ body {
     color: white;
     font-size: 1.2rem;
     font-weight: bold;
-    cursor: pointer;
-    flex-shrink: 0;
-    user-select: none;
-    transition: all 0.3s ease;
-    /* 重要：デフォルトの内容と状態を設定 */
-    content: '+';
+    transition: transform 0.3s ease;
 }
 
-/* プラス状態（デフォルト） */
-.service-card[data-state="closed"] .service-toggle {
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    transform: rotate(0deg);
-}
-
-/* マイナス状態（開いている時） */
-.service-card[data-state="open"] .service-toggle {
-    background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
-    transform: rotate(0deg);
+.service-card.active .service-toggle {
+    transform: rotate(45deg);
 }
 
 .service-content {
-    background: white;
-    position: relative;
-    overflow: hidden;
-    /* 重要：初期状態を明示的に指定 */
-    max-height: 0px;
     padding: 0 2rem;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
+    max-height: 0;
+    overflow: hidden;
+    transition: all 0.4s ease;
 }
 
-/* 開いた状態 - 非常に具体的なセレクター */
-.service-card[data-service-id][data-state="open"] .service-content {
-    max-height: 600px !important;
-    padding: 2rem !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-/* 閉じた状態 - 非常に具体的なセレクター */
-.service-card[data-service-id][data-state="closed"] .service-content {
-    max-height: 0px !important;
-    padding: 0 2rem !important;
-    opacity: 0 !important;
-    visibility: hidden !important;
+.service-card.active .service-content {
+    max-height: 300px;
+    padding: 2rem;
 }
 
 .service-description {
@@ -416,7 +373,6 @@ body {
 .service-features {
     list-style: none;
     padding: 0;
-    margin: 0;
 }
 
 .service-features li {
@@ -432,40 +388,6 @@ body {
     left: 0;
     color: #FFD700;
     font-weight: bold;
-}
-
-.service-card:focus {
-    outline: 2px solid #FFD700;
-    outline-offset: 2px;
-}
-
-/* デバッグ用境界線 */
-.service-card[data-service-id*="0"] {
-    border-left: 3px solid #ff0000;
-}
-
-.service-card[data-service-id*="1"] {
-    border-left: 3px solid #00ff00;
-}
-
-.service-card[data-service-id*="2"] {
-    border-left: 3px solid #0000ff;
-}
-
-.service-card[data-service-id*="3"] {
-    border-left: 3px solid #ffff00;
-}
-
-.service-card[data-service-id*="4"] {
-    border-left: 3px solid #ff00ff;
-}
-
-.service-card[data-service-id*="5"] {
-    border-left: 3px solid #00ffff;
-}
-
-.service-card[data-service-id*="6"] {
-    border-left: 3px solid #ffa500;
 }
 
 /* 制作フロー */
@@ -683,131 +605,6 @@ body {
     font-size: 1rem;
 }
 
-/* ポートフォリオ */
-.portfolio {
-    background: 
-        linear-gradient(135deg, rgba(255, 215, 0, 0.03) 0%, rgba(255, 165, 0, 0.03) 100%),
-        linear-gradient(45deg, #fafafa 0%, #ffffff 50%, #f5f5f5 100%);
-    position: relative;
-}
-
-.portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    gap: 2rem;
-    margin-bottom: 3rem;
-}
-
-.portfolio-item {
-    background: white;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-}
-
-.portfolio-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(255, 215, 0, 0.2);
-}
-
-.portfolio-image {
-    height: 180px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    font-size: 1.5rem;
-    color: white;
-    font-weight: bold;
-}
-
-.video-thumb {
-    background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
-}
-
-.design-thumb {
-    background: linear-gradient(135deg, #4ECDC4, #6FDDDD);
-}
-
-.presentation-thumb {
-    background: linear-gradient(135deg, #A8E6CF, #C3F0CA);
-}
-
-.sns-thumb {
-    background: linear-gradient(135deg, #FFD93D, #FFE066);
-}
-
-.web-thumb {
-    background: linear-gradient(135deg, #FF8C42, #FFAB66);
-}
-
-.youtube-thumb {
-    background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
-}
-
-.ad-thumb {
-    background: linear-gradient(135deg, #6C5CE7, #A29BFE);
-}
-
-.office-thumb {
-    background: linear-gradient(135deg, #00B894, #00CEC9);
-}
-
-.ads-thumb {
-    background: linear-gradient(135deg, #6C5CE7, #A29BFE);
-}
-
-.play-button,
-.design-icon,
-.presentation-icon,
-.sns-icon,
-.web-icon,
-.ad-icon,
-.office-icon,
-.ads-icon {
-    font-size: 2rem;
-}
-
-.portfolio-content {
-    padding: 1.5rem;
-}
-
-.portfolio-content h4 {
-    margin-bottom: 0.8rem;
-    color: #333;
-    font-weight: bold;
-    font-size: 1.1rem;
-}
-
-.portfolio-content p {
-    color: #666;
-    line-height: 1.5;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-}
-
-.portfolio-tags {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-}
-
-.portfolio-tag {
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    color: white;
-    padding: 0.25rem 0.7rem;
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 500;
-}
-
-.more-portfolio {
-    text-align: center;
-    margin-top: 4rem;
-}
-
 /* お客様の声 */
 .testimonials {
     background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f1f3f4 100%);
@@ -830,29 +627,25 @@ body {
     z-index: 2;
 }
 
-.testimonials-slider {
-    position: relative;
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.testimonial-wrapper {
-    position: relative;
-    overflow: hidden;
+.testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-top: 4rem;
 }
 
 .testimonial-item {
     background: white;
-    padding: 3rem 2rem 2rem;
+    padding: 2rem;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
-    display: none;
-    margin: 0 1rem;
+    position: relative;
 }
 
-.testimonial-item.active {
-    display: block;
+.testimonial-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(255, 215, 0, 0.15);
 }
 
 .testimonial-content {
@@ -864,11 +657,10 @@ body {
     font-size: 4rem;
     color: #FFD700;
     position: absolute;
-    top: -2rem;
+    top: -1rem;
     left: -0.5rem;
     font-family: serif;
     opacity: 0.3;
-    line-height: 1;
 }
 
 .testimonial-content p {
@@ -876,14 +668,12 @@ body {
     line-height: 1.8;
     font-style: italic;
     margin-left: 2rem;
-    font-size: 1.1rem;
 }
 
 .testimonial-author {
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-left: 2rem;
 }
 
 .author-avatar {
@@ -894,11 +684,16 @@ body {
     flex-shrink: 0;
 }
 
+.author-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
 .author-info .author-name {
     font-weight: bold;
     color: #333;
     margin-bottom: 0.2rem;
-    font-size: 1.1rem;
 }
 
 .author-info .author-company {
@@ -916,48 +711,124 @@ body {
     display: inline-block;
 }
 
-.slider-nav {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 2rem;
-    margin-top: 2rem;
+/* Give & Take */
+.give-take {
+    background: #fafafa;
+    position: relative;
 }
 
-.slider-btn {
+.give-take-hero {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    color: #333;
+    padding: 4rem 2rem;
+    border-radius: 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid rgba(255, 215, 0, 0.1);
+}
+
+.give-take-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="platform-pattern" width="30" height="30" patternUnits="userSpaceOnUse"><rect x="5" y="5" width="20" height="15" rx="2" fill="rgba(255,215,0,0.05)"/><circle cx="8" cy="8" r="1" fill="rgba(255,215,0,0.1)"/><circle cx="22" cy="22" r="1" fill="rgba(255,215,0,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23platform-pattern)"/></svg>');
+    opacity: 0.4;
+}
+
+.give-take-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.give-take-hero h2 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 800;
+    color: #333;
+}
+
+.give-take-hero .subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.coming-soon-badge {
+    background: #FFD700;
+    color: #333;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.give-take-hero p {
+    font-size: 1.1rem;
+    margin-bottom: 3rem;
+    color: #666;
+    line-height: 1.7;
+}
+
+.give-take-features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.feature-item {
+    text-align: center;
+}
+
+.feature-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 215, 0, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    color: #333;
+    font-size: 1.3rem;
+}
+
+.feature-title {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #333;
+}
+
+.feature-desc {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.give-take-hero .cta-button {
     background: linear-gradient(135deg, #FFD700, #FFA500);
     color: white;
-    border: none;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    font-size: 1.2rem;
-    cursor: pointer;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
     transition: all 0.3s ease;
-}
-
-.slider-btn:hover {
-    transform: scale(1.1);
     box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+    display: inline-block;
 }
 
-.slider-dots {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: #ddd;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.dot.active {
-    background: #FFD700;
-    transform: scale(1.3);
+.give-take-hero .cta-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.4);
 }
 
 /* お問い合わせ */
@@ -1028,27 +899,6 @@ body {
     font-size: 0.9rem;
     line-height: 1.6;
     color: #666;
-}
-
-.privacy-list {
-    list-style: none;
-    padding-left: 0;
-    margin: 1rem 0;
-}
-
-.privacy-list li {
-    padding: 0.2rem 0;
-    color: #666;
-    position: relative;
-    padding-left: 1rem;
-}
-
-.privacy-list li::before {
-    content: '•';
-    position: absolute;
-    left: 0;
-    color: #FFD700;
-    font-weight: bold;
 }
 
 .privacy-checkbox {
@@ -1260,7 +1110,7 @@ body {
     transform: translateY(0);
 }
 
-/* スクリーンリーダー用 */
+/* スクリーンリーダー用の非表示クラス */
 .sr-only {
     position: absolute !important;
     width: 1px !important;
@@ -1288,604 +1138,86 @@ body {
     z-index: 100000 !important;
 }
 
-/* ポートフォリオページ専用スタイル */
-.page-hero {
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #e9ecef 100%);
-    padding: 8rem 0 4rem;
-    text-align: center;
-}
-
-.page-title {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    background: linear-gradient(135deg, #333 0%, #FFD700 50%, #FFA500 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-weight: 800;
-}
-
-.page-subtitle {
-    font-size: 1.2rem;
-    color: #666;
-    margin-bottom: 2rem;
-}
-
-/* フィルタータブ */
-.portfolio-filter {
-    padding: 2rem 0;
-}
-
-.filter-tabs {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    flex-wrap: wrap;
-    margin-bottom: 2rem;
-}
-
-.category-tab {
-    padding: 0.8rem 2rem;
-    border: 2px solid #e0e0e0;
-    background: white;
-    border-radius: 50px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-weight: 500;
-}
-
-.category-tab.active,
-.category-tab:hover {
-    border-color: #FFD700;
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    color: white;
-}
-
-/* ポートフォリオショーケース */
-.portfolio-showcase {
-    padding: 2rem 0 4rem;
-}
-
-.portfolio-showcase .portfolio-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
-    margin-bottom: 5rem;
-}
-
-.portfolio-showcase .portfolio-item {
-    background: white;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    opacity: 1;
-    transform: scale(1);
-}
-
-.portfolio-showcase .portfolio-item.hidden {
-    display: none;
-}
-
-.portfolio-showcase .portfolio-item:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 35px rgba(255, 215, 0, 0.2);
-}
-
-.portfolio-showcase .portfolio-image {
-    height: 250px;
-    position: relative;
-    overflow: hidden;
-    background-size: cover;
-    background-position: center;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.portfolio-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    opacity: 0;
-    transition: all 0.3s ease;
-}
-
-.portfolio-showcase .portfolio-item:hover .portfolio-overlay {
-    opacity: 1;
-}
-
-.portfolio-showcase .portfolio-content {
-    padding: 2rem;
-}
-
-.portfolio-showcase .portfolio-content h4 {
-    margin-bottom: 1rem;
-    color: #333;
-    font-weight: bold;
-}
-
-.portfolio-showcase .portfolio-content p {
-    color: #666;
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-}
-
-.portfolio-results {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    margin-top: 1rem;
-}
-
-.result-item {
-    background: #f8f9fa;
-    color: #333;
-    padding: 0.3rem 0.8rem;
-    border-radius: 15px;
-    font-size: 0.8rem;
-    font-weight: 500;
-    border: 1px solid #e0e0e0;
-}
-
-/* 制作プロセス */
-.creation-process {
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f1f3f4 100%);
-}
-
-.process-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
-    margin-top: 3rem;
-    position: relative;
-}
-
-.process-item {
-    background: white;
-    padding: 2.5rem 2rem;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    position: relative;
-    transition: all 0.3s ease;
-}
-
-.process-item:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 15px 35px rgba(255, 215, 0, 0.2);
-}
-
-.process-step {
-    position: absolute;
-    top: -15px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 40px;
-    height: 40px;
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-}
-
-.process-icon {
-    font-size: 2rem;
-    margin: 1rem 0;
-}
-
-.process-item h4 {
-    margin-bottom: 1rem;
-    color: #333;
-    font-weight: bold;
-}
-
-.process-item p {
-    color: #666;
-    line-height: 1.6;
-}
-
-.process-arrow {
-    position: absolute;
-    top: 50%;
-    right: -2rem;
-    transform: translateY(-50%);
-    font-size: 2rem;
-    color: #FFD700;
-    font-weight: bold;
-}
-
-.process-item:last-child .process-arrow {
-    display: none;
-}
-
-/* お客様の成果 */
-.client-results {
-    background: white;
-}
-
-.results-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-top: 3rem;
-}
-
-.client-results .result-item {
-    background: white;
-    padding: 2.5rem 2rem;
-    border-radius: 15px;
-    text-align: center;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    border: none;
-}
-
-.result-number {
-    font-size: 3rem;
-    font-weight: 800;
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 0.5rem;
-}
-
-.result-label {
-    font-weight: bold;
-    color: #333;
-    margin-bottom: 1rem;
-}
-
-.client-results .result-item p {
-    color: #666;
-    line-height: 1.6;
-}
-
-/* プライバシーポリシーページ専用スタイル */
-.privacy-policy-page {
-    margin-top: 100px;
-    padding: 3rem 0 5rem;
-    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
-}
-
-.privacy-policy-page .page-header {
-    text-align: center;
-    margin-bottom: 3rem;
-    background: white;
-    padding: 3rem;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-}
-
-.privacy-policy-page .page-title {
-    font-size: 2.8rem;
-    margin-bottom: 1rem;
-    background: linear-gradient(135deg, #333 0%, #FFD700 50%, #FFA500 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-weight: 800;
-}
-
-.privacy-policy-page .page-subtitle {
-    font-size: 1.1rem;
-    color: #666;
-    margin-bottom: 1rem;
-}
-
-.last-updated {
-    font-size: 0.9rem;
-    color: #999;
-    font-style: italic;
-    background: #f8f9fa;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    display: inline-block;
-}
-
-.privacy-content {
-    background: white;
-    padding: 3rem;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
-    line-height: 1.8;
-}
-
-.privacy-section {
-    margin-bottom: 3rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.privacy-section:last-child {
-    margin-bottom: 0;
-    border-bottom: none;
-}
-
-.privacy-content .section-title {
-    font-size: 1.4rem;
-    color: #333;
-    margin-bottom: 1.5rem;
-    font-weight: bold;
-    text-align: left;
-}
-
-.section-content {
-    margin-bottom: 1.5rem;
-}
-
-.section-content p {
-    margin-bottom: 1rem;
-    color: #444;
-}
-
-.subsection {
-    margin: 2rem 0;
-    padding: 1.5rem;
-    background: #f8f9fa;
-    border-radius: 10px;
-    border-left: 3px solid #FFD700;
-}
-
-.subsection-title {
-    font-size: 1.1rem;
-    color: #333;
-    margin-bottom: 1rem;
-    font-weight: bold;
-}
-
-.privacy-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1.5rem 0;
-    background: white;
-    border: 1px solid #e0e0e0;
-}
-
-.privacy-table th,
-.privacy-table td {
-    padding: 1rem;
-    text-align: left;
-    border-bottom: 1px solid #e0e0e0;
-}
-
-.privacy-table th {
-    background: #f8f9fa;
-    font-weight: bold;
-    color: #333;
-    width: 30%;
-}
-
-.privacy-table tr:last-child th,
-.privacy-table tr:last-child td {
-    border-bottom: none;
-}
-
-.contact-info {
-    background: #f8f9fa;
-    padding: 2.5rem;
-    border-radius: 15px;
-    margin-top: 3rem;
-    border: 1px solid #e0e0e0;
-}
-
-.contact-info h3 {
-    color: #333;
-    margin-bottom: 1.5rem;
-    font-size: 1.3rem;
-    font-weight: bold;
-}
-
-.contact-note {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background: white;
-    border-radius: 10px;
-    border: 1px solid #e0e0e0;
-}
-
-.privacy-content a {
-    color: #FFD700;
-    text-decoration: underline;
-    transition: color 0.3s ease;
-    font-weight: 500;
-}
-
-.privacy-content a:hover {
-    color: #FFA500;
-}
-
-/* アニメーション最適化 */
-@media (prefers-reduced-motion: reduce) {
-    .service-card,
-    .service-toggle,
-    .service-content {
-        transition: none !important;
-        animation: none !important;
-    }
-}
-
 /* レスポンシブデザイン */
 @media (max-width: 768px) {
     .nav-menu {
         display: none;
     }
-    
+
     .mobile-menu-toggle {
         display: flex;
     }
-    
+
     .mobile-menu-overlay {
         display: block;
     }
-    
+
     .hero h1 {
         font-size: 2.5rem;
     }
-    
+
     .hero p {
         font-size: 1.1rem;
     }
-    
+
     .section-title {
-        font-size: 2.2rem;
+        font-size: 2rem;
     }
-    
+
     .services-grid {
         grid-template-columns: 1fr;
-        gap: 1.5rem;
     }
-    
-    .service-header {
-        padding: 1.5rem;
-    }
-    
-    .service-card[data-service-id][data-state="open"] .service-content {
-        padding: 1.5rem !important;
-    }
-    
-    .service-toggle {
-        width: 28px;
-        height: 28px;
-        font-size: 1.1rem;
-    }
-    
-    .service-icon {
-        width: 45px;
-        height: 45px;
-        font-size: 1.2rem;
-    }
-    
-    .service-title {
-        font-size: 1.2rem;
-    }
-    
+
     .workflow-grid {
         grid-template-columns: 1fr;
         gap: 3rem;
     }
-    
+
     .workflow-arrow {
         top: auto;
         bottom: -1.5rem;
         right: 50%;
         transform: translateX(50%) rotate(90deg);
     }
-    
+
     .workflow-item:last-child .workflow-arrow {
         display: none;
     }
-    
-    .portfolio-grid {
-        grid-template-columns: 1fr;
-        grid-template-rows: repeat(8, 1fr);
-    }
-    
-    .portfolio-showcase .portfolio-grid {
+
+    .testimonials-grid {
         grid-template-columns: 1fr;
     }
-    
-    .process-grid {
-        grid-template-columns: 1fr;
-        gap: 3rem;
-    }
-    
-    .process-arrow {
-        display: none;
-    }
-    
-    .results-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .testimonial-item {
-        padding: 2rem 1.5rem;
-        margin: 0 0.5rem;
-    }
-    
+
     .testimonial-content p {
-        font-size: 1rem;
         margin-left: 1rem;
     }
-    
-    .testimonial-author {
-        margin-left: 1rem;
-    }
-    
-    .slider-nav {
+
+    .give-take-features {
+        grid-template-columns: 1fr;
         gap: 1rem;
     }
-    
+
+    .give-take-hero h2 {
+        font-size: 2rem;
+    }
+
+    .give-take-hero .subtitle {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
     .footer-content {
         grid-template-columns: 1fr;
         gap: 2rem;
     }
-    
+
     .footer-nav {
         grid-template-columns: 1fr;
         gap: 1rem;
     }
-    
+
     .container {
         padding: 0 1rem;
-    }
-    
-    .page-title {
-        font-size: 2rem;
-    }
-    
-    .filter-tabs {
-        gap: 0.5rem;
-    }
-    
-    .category-tab {
-        padding: 0.6rem 1.5rem;
-        font-size: 0.9rem;
-    }
-    
-    /* プライバシーポリシーページのレスポンシブ */
-    .privacy-policy-page {
-        padding: 2rem 0 4rem;
-    }
-    
-    .privacy-policy-page .page-header {
-        padding: 2rem 1.5rem;
-    }
-    
-    .privacy-content {
-        padding: 2rem 1.5rem;
-    }
-    
-    .privacy-policy-page .page-title {
-        font-size: 2.2rem;
-    }
-    
-    .privacy-table {
-        font-size: 0.9rem;
-    }
-    
-    .privacy-table th,
-    .privacy-table td {
-        padding: 0.8rem 0.6rem;
-    }
-    
-    .contact-info {
-        padding: 2rem 1.5rem;
-    }
-    
-    .contact-note {
-        padding: 1rem;
     }
 }
 
@@ -1893,269 +1225,28 @@ body {
     .hero h1 {
         font-size: 2rem;
     }
-    
+
     .workflow-grid {
         gap: 2rem;
     }
-    
+
     .workflow-item {
         padding: 1.5rem 1rem;
     }
-    
-    .service-header {
-        padding: 1.2rem;
-    }
-    
-    .service-card[data-service-id][data-state="open"] .service-content {
-        padding: 1.2rem !important;
-    }
-    
-    .service-info {
-        gap: 0.8rem;
-    }
-    
-    .service-title {
-        font-size: 1.1rem;
-    }
-    
-    /* プライバシーポリシーページの480px対応 */
-    .privacy-policy-page .page-title {
-        font-size: 1.8rem;
-    }
-    
-    .privacy-content .section-title {
-        font-size: 1.1rem;
-    }
-    
-    .privacy-table th {
-        width: 35%;
-    }
-    
-    .privacy-table {
-        font-size: 0.8rem;
-    }
 }
 
-/* 高解像度ディスプレイ対応 */
-@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-    .service-toggle {
-        transform-origin: center center;
-    }
+/* 会社概要 - メールリンク */
+.company-table .email-link {
+    color: #0066cc;
+    text-decoration: none;
+    transition: all 0.3s ease;
 }
 
-/* 印刷スタイル */
-@media print {
-    .privacy-policy-page {
-        margin-top: 0;
-        background: white;
-    }
-    
-    .page-header,
-    .privacy-content {
-        box-shadow: none;
-        border: 1px solid #ccc;
-    }
-    
-    .contact-info {
-        background: white;
-        border: 1px solid #ccc;
-    }
-    
-    .privacy-content .section-title {
-        color: #000;
-    }
-    
-    .privacy-content a {
-        color: #000;
-        text-decoration: underline;
-    }
+.company-table .email-link:hover {
+    color: #0052a3;
+    text-decoration: underline;
 }
 
-/* YouTube動画モーダル */
-#youtube-modal {
-    display: none;
-    position: fixed;
-    z-index: 10000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-}
-
-.youtube-modal-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.youtube-modal-content {
-    position: relative;
-    width: 90%;
-    max-width: 800px;
-    aspect-ratio: 16/9;
-    background: #000;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.youtube-modal-close {
-    position: absolute;
-    top: -40px;
-    right: 0;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 2rem;
-    cursor: pointer;
-    z-index: 10001;
-    padding: 5px 10px;
-}
-
-.youtube-modal-close:hover {
-    color: #FFD700;
-}
-
-.youtube-video-container {
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
-
-.youtube-video-container iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-/* ポートフォリオアイテムにYouTube動画がある場合の表示 */
-.portfolio-item[data-youtube-url] .portfolio-image {
-    position: relative;
-}
-
-.portfolio-item[data-youtube-url] .portfolio-image::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 60px;
-    height: 60px;
-    background: rgba(255, 0, 0, 0.8);
-    border-radius: 8px;
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>');
-    background-size: 24px;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-
-.portfolio-item[data-youtube-url]:hover .portfolio-image::after {
-    background: rgba(255, 0, 0, 1);
-    transform: translate(-50%, -50%) scale(1.1);
-}
-
-@media (max-width: 768px) {
-    .youtube-modal-content {
-        width: 95%;
-        margin: 0 auto;
-    }
-    
-    .youtube-modal-close {
-        top: -50px;
-        font-size: 1.5rem;
-    }
-}
-
-/* ポートフォリオフィルター用 */
-.portfolio-item.hidden {
-    display: none;
-}
-
-/* YouTube動画用のスタイル改善 */
-.portfolio-item[data-youtube-url] {
-    position: relative;
-    cursor: pointer;
-}
-
-.portfolio-item[data-youtube-url]:hover {
-    transform: translateY(-5px);
-}
-
-.portfolio-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-/* ソーシャルメディア用プレースホルダー */
-.social-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    text-align: center;
-    font-weight: bold;
-    position: relative;
-}
-
-.channel-placeholder {
-    background: linear-gradient(135deg, #FF0000, #CC0000);
-}
-
-.instagram-post {
-    background: linear-gradient(135deg, #E4405F, #C13584);
-}
-
-.instagram-profile {
-    background: linear-gradient(135deg, #833AB4, #C13584, #E4405F);
-}
-
-.tiktok-video {
-    background: linear-gradient(135deg, #FF0050, #00F2EA);
-}
-
-.tiktok-profile {
-    background: linear-gradient(135deg, #000000, #FF0050);
-}
-
-.social-placeholder .social-icon {
-    font-size: 3rem;
-    margin-bottom: 0.5rem;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-}
-
-.social-placeholder .social-text,
-.channel-placeholder .channel-text {
-    font-size: 0.9rem;
-    line-height: 1.2;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-}
-
-/* YouTube埋め込み画像の調整 */
-.portfolio-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 0;
-}
-
-/* ホバーエフェクトの調整 */
-.portfolio-item:hover .social-placeholder {
-    transform: scale(1.05);
-    transition: transform 0.3s ease;
-}
-
-.portfolio-item:hover .social-placeholder .social-icon {
-    transform: scale(1.1);
-    transition: transform 0.3s ease;
+.company-table .email-link:visited {
+    color: #551a8b;
 }
