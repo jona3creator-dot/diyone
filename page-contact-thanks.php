@@ -30,8 +30,8 @@ get_header(); ?>
                 <div class="contact-info">
                     <p class="info-title">なお、しばらくたっても当社より返信、返答がない場合は、</p>
                     <p>お客様によりご入力いただいたメールアドレスに誤りがある場合がございます。</p>
-                    <p class="contact-detail">その際は、お手数ですが再度送信いただくか、</p>
-                    <p class="phone-contact">お電話（<a href="tel:090-3265-2422">090-3265-2422</a>）までご連絡いただけますと幸いです。</p>
+                    <p class="contact-detail">その際は、お手数ですが再度お問い合わせフォームより送信いただくか、</p>
+                    <p class="email-contact">直接メール（<a href="mailto:diyone001@gmail.com">diyone001@gmail.com</a>）までご連絡いただけますと幸いです。</p>
                 </div>
                 
                 <div class="back-to-home">
