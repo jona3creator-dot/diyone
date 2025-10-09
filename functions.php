@@ -176,4 +176,3 @@ function diyone_cleanup_head() {
 }
 add_action('init', 'diyone_cleanup_head');
 ?>
-
