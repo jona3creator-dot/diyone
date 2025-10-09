@@ -368,7 +368,7 @@ get_header(); ?>
 
             <!-- もっと見るボタン -->
             <div class="more-portfolio">
-                <a href="https://diyone.net/portfolio" class="cta-button">もっと見る</a>
+                <a href="<?php echo esc_url(home_url('/portfolio')); ?>" class="cta-button">もっと見る</a>
             </div>
         </div>
     </section>

@@ -1,5 +1,6 @@
 <?php
 /**
+ * Template Name: Portfolio Page
  * Portfolio Page Template - DIYONE Corporate Website
  */
 get_header(); ?>
@@ -469,6 +470,10 @@ get_header(); ?>
     background: linear-gradient(135deg, #00B894, #00CEC9);
 }
 
+.ads-thumb {
+    background: linear-gradient(135deg, #6C5CE7, #A29BFE);
+}
+
 .play-button,
 .ads-icon {
     font-size: 2rem;
@@ -658,29 +663,6 @@ get_header(); ?>
         font-size: 0.9rem;
     }
     
-    /* タブレット: 2列表示 */
-@media (min-width: 769px) and (max-width: 1024px) {
-    .portfolio-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 1.5rem;
-    }
-}
-
-/* スマートフォン: 1列表示 */
-@media (max-width: 768px) {
-    .page-title {
-        font-size: 2rem;
-    }
-    
-    .filter-tabs {
-        gap: 0.5rem;
-    }
-    
-    .category-tab {
-        padding: 0.6rem 1.5rem;
-        font-size: 0.9rem;
-    }
-    
     .portfolio-grid {
         grid-template-columns: 1fr; /* スマホは1列 */
     }
@@ -696,6 +678,14 @@ get_header(); ?>
     
     .results-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* タブレット: 2列表示 */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .portfolio-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
     }
 }
 </style>
