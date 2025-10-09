@@ -1,7 +1,7 @@
 <?php
 /**
  * Template Name: Portfolio Page
- * Portfolio Page Template - DIYONE Corporate Website (動的表示版)
+ * Portfolio Page Template - DIYONE Corporate Website (スライドショー対応版)
  */
 get_header(); ?>
 
@@ -50,7 +50,7 @@ get_header(); ?>
                 // 全ポートフォリオを取得
                 $portfolio_args = array(
                     'post_type' => 'portfolio',
-                    'posts_per_page' => -1, // 全件表示
+                    'posts_per_page' => -1,
                     'orderby' => 'date',
                     'order' => 'DESC'
                 );
@@ -62,6 +62,10 @@ get_header(); ?>
                         $video_url = get_post_meta(get_the_ID(), '_portfolio_video_url', true);
                         $categories = get_the_terms(get_the_ID(), 'portfolio_category');
                         $tags = get_the_terms(get_the_ID(), 'portfolio_tag');
+                        $gallery_images = diyone_get_portfolio_gallery_images(get_the_ID());
+                        
+                        // デバッグ: ギャラリー画像の数を確認（一時的）
+                        // echo '<!-- DEBUG: Gallery Images Count: ' . count($gallery_images) . ' -->';
                         
                         // カテゴリーのスラッグを取得（フィルター用）
                         $category_slug = '';
@@ -81,16 +85,32 @@ get_header(); ?>
                                 $thumbnail_html = '<div class="no-image">No Image</div>';
                             }
                         }
+                        
+                        // ギャラリー画像のデータを準備
+                        $gallery_data = '';
+                        if (!empty($gallery_images)) {
+                            $gallery_data = 'data-gallery=\'' . esc_attr(json_encode($gallery_images)) . '\'';
+                        }
                 ?>
                 <div class="portfolio-item fade-in" 
                      data-category="<?php echo esc_attr($category_slug); ?>"
                      data-portfolio-id="<?php echo get_the_ID(); ?>" 
                      data-media-type="<?php echo esc_attr($media_type); ?>" 
-                     data-video-url="<?php echo esc_attr($video_url); ?>">
+                     data-video-url="<?php echo esc_attr($video_url); ?>"
+                     <?php echo $gallery_data; ?>>
                     <div class="portfolio-image <?php echo esc_attr($category_class); ?>">
                         <?php echo $thumbnail_html; ?>
                         <?php if ($media_type === 'video') : ?>
                             <div class="play-button-overlay">▶</div>
+                        <?php elseif (count($gallery_images) > 1) : ?>
+                            <div class="gallery-badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                                <?php echo count($gallery_images); ?>
+                            </div>
                         <?php endif; ?>
                     </div>
                     <div class="portfolio-content">
@@ -203,7 +223,17 @@ get_header(); ?>
     <div class="modal-content">
         <button class="modal-close" aria-label="閉じる">&times;</button>
         <div class="modal-body">
-            <div class="modal-media"></div>
+            <div class="modal-media">
+                <!-- スライドショーコンテナ -->
+                <div class="slideshow-container"></div>
+                <!-- スライドショーコントロール -->
+                <div class="slideshow-controls" style="display: none;">
+                    <button class="slide-prev" aria-label="前の画像">‹</button>
+                    <button class="slide-next" aria-label="次の画像">›</button>
+                </div>
+                <!-- サムネイル一覧 -->
+                <div class="slideshow-thumbnails" style="display: none;"></div>
+            </div>
             <div class="modal-info">
                 <h3 class="modal-title"></h3>
                 <div class="modal-description"></div>
@@ -314,6 +344,20 @@ get_header(); ?>
     width: 100%;
     height: 100%;
     object-fit: cover;
+}
+
+/* ギャラリーバッジ */
+.gallery-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    z-index: 2;
 }
 
 .video-thumb, .default-thumb {
@@ -588,37 +632,112 @@ get_header(); ?>
     margin-bottom: 2rem;
     border-radius: 10px;
     overflow: hidden;
+    position: relative;
 }
 
-.modal-media img {
+/* スライドショーコンテナ */
+.slideshow-container {
+    position: relative;
+    width: 100%;
+}
+
+.slideshow-container img {
     width: 100%;
     height: auto;
     display: block;
+    border-radius: 10px;
 }
 
-.modal-media iframe,
-.modal-media blockquote {
+.slideshow-container iframe,
+.slideshow-container blockquote {
     width: 100%;
     min-height: 400px;
 }
 
-.modal-media .tiktok-embed {
-    margin: 0 auto;
+.slide-item {
+    display: none;
 }
 
-.modal-media .instagram-media {
-    margin: 0 auto !important;
+.slide-item.active {
+    display: block;
+    animation: fadeIn 0.5s ease;
 }
 
-/* 外部リンクボタンのホバーエフェクト */
-.modal-media a[target="_blank"] {
-    display: inline-block;
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* スライドショーコントロール */
+.slideshow-controls {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1rem;
+    pointer-events: none;
+}
+
+.slide-prev,
+.slide-next {
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.slide-prev:hover,
+.slide-next:hover {
+    background: rgba(255, 215, 0, 0.9);
+    transform: scale(1.1);
+}
+
+/* サムネイル一覧 */
+.slideshow-thumbnails {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    overflow-x: auto;
+    padding: 0.5rem 0;
+}
+
+.thumb-item {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+    cursor: pointer;
+    border-radius: 5px;
+    overflow: hidden;
+    border: 3px solid transparent;
     transition: all 0.3s ease;
 }
 
-.modal-media a[target="_blank"]:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4) !important;
+.thumb-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.thumb-item.active {
+    border-color: #FFD700;
+}
+
+.thumb-item:hover {
+    border-color: #FFA500;
+    transform: scale(1.05);
 }
 
 .modal-title {
@@ -690,9 +809,20 @@ get_header(); ?>
         padding: 1.5rem;
     }
     
-    .modal-media iframe,
-    .modal-media blockquote {
-        min-height: 300px;
+    .slideshow-controls {
+        padding: 0 0.5rem;
+    }
+    
+    .slide-prev,
+    .slide-next {
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+    }
+    
+    .thumb-item {
+        width: 60px;
+        height: 60px;
     }
 }
 
@@ -734,15 +864,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('portfolio-modal');
     const modalClose = document.querySelector('.modal-close');
     const modalOverlay = document.querySelector('.modal-overlay');
+    let currentSlideIndex = 0;
+    let galleryImages = [];
 
     portfolioItems.forEach(item => {
         item.addEventListener('click', function() {
-            const portfolioId = this.dataset.portfolioId;
             const mediaType = this.dataset.mediaType;
             const videoUrl = this.dataset.videoUrl;
             const title = this.querySelector('h4').textContent;
             const description = this.querySelector('.portfolio-content p').textContent;
             const tags = this.querySelectorAll('.portfolio-tag');
+            const galleryData = this.dataset.gallery;
             
             // モーダルにコンテンツを設定
             document.querySelector('.modal-title').textContent = title;
@@ -756,22 +888,53 @@ document.addEventListener('DOMContentLoaded', function() {
             });
             
             // メディアを設定
-            const modalMedia = document.querySelector('.modal-media');
+            const slideshowContainer = document.querySelector('.slideshow-container');
+            const slideshowControls = document.querySelector('.slideshow-controls');
+            const slideshowThumbnails = document.querySelector('.slideshow-thumbnails');
+            
             if (mediaType === 'video' && videoUrl) {
-                // 動画埋め込み用のAJAXリクエスト
+                // 動画埋め込み
                 fetch('<?php echo admin_url("admin-ajax.php"); ?>?action=get_video_embed&video_url=' + encodeURIComponent(videoUrl))
                     .then(response => response.text())
                     .then(html => {
-                        modalMedia.innerHTML = html;
+                        slideshowContainer.innerHTML = html;
+                        slideshowControls.style.display = 'none';
+                        slideshowThumbnails.style.display = 'none';
                     });
+            } else if (galleryData) {
+                // 複数画像のスライドショー
+                try {
+                    galleryImages = JSON.parse(galleryData);
+                    if (galleryImages.length > 0) {
+                        currentSlideIndex = 0;
+                        renderSlideshow();
+                        
+                        // 複数画像の場合のみコントロールとサムネイルを表示
+                        if (galleryImages.length > 1) {
+                            slideshowControls.style.display = 'flex';
+                            slideshowThumbnails.style.display = 'flex';
+                            renderThumbnails();
+                        } else {
+                            slideshowControls.style.display = 'none';
+                            slideshowThumbnails.style.display = 'none';
+                        }
+                    }
+                } catch (e) {
+                    console.error('ギャラリーデータのパースエラー:', e);
+                    slideshowContainer.innerHTML = '<p>画像の読み込みに失敗しました</p>';
+                    slideshowControls.style.display = 'none';
+                    slideshowThumbnails.style.display = 'none';
+                }
             } else {
-                // 画像表示
+                // 単一画像
                 const img = this.querySelector('.portfolio-image img');
                 if (img) {
-                    modalMedia.innerHTML = '<img src="' + img.src + '" alt="' + title + '">';
+                    slideshowContainer.innerHTML = '<img src="' + img.src + '" alt="' + title + '">';
                 } else {
-                    modalMedia.innerHTML = '<p>画像がありません</p>';
+                    slideshowContainer.innerHTML = '<p>画像がありません</p>';
                 }
+                slideshowControls.style.display = 'none';
+                slideshowThumbnails.style.display = 'none';
             }
             
             // モーダル表示
@@ -780,10 +943,95 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // スライドショーを描画
+    function renderSlideshow() {
+        const container = document.querySelector('.slideshow-container');
+        container.innerHTML = '';
+        
+        galleryImages.forEach((image, index) => {
+            const slideDiv = document.createElement('div');
+            slideDiv.className = 'slide-item' + (index === currentSlideIndex ? ' active' : '');
+            slideDiv.innerHTML = '<img src="' + image.url + '" alt="画像' + (index + 1) + '">';
+            container.appendChild(slideDiv);
+        });
+    }
+
+    // サムネイルを描画
+    function renderThumbnails() {
+        const container = document.querySelector('.slideshow-thumbnails');
+        container.innerHTML = '';
+        
+        galleryImages.forEach((image, index) => {
+            const thumbDiv = document.createElement('div');
+            thumbDiv.className = 'thumb-item' + (index === currentSlideIndex ? ' active' : '');
+            thumbDiv.innerHTML = '<img src="' + image.url + '" alt="サムネイル' + (index + 1) + '">';
+            thumbDiv.addEventListener('click', function() {
+                currentSlideIndex = index;
+                updateSlideshow();
+            });
+            container.appendChild(thumbDiv);
+        });
+    }
+
+    // スライドショーを更新
+    function updateSlideshow() {
+        const slides = document.querySelectorAll('.slide-item');
+        const thumbs = document.querySelectorAll('.thumb-item');
+        
+        slides.forEach((slide, index) => {
+            if (index === currentSlideIndex) {
+                slide.classList.add('active');
+            } else {
+                slide.classList.remove('active');
+            }
+        });
+        
+        thumbs.forEach((thumb, index) => {
+            if (index === currentSlideIndex) {
+                thumb.classList.add('active');
+            } else {
+                thumb.classList.remove('active');
+            }
+        });
+    }
+
+    // 前へボタン
+    document.querySelector('.slide-prev').addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (galleryImages.length > 0) {
+            currentSlideIndex = (currentSlideIndex - 1 + galleryImages.length) % galleryImages.length;
+            updateSlideshow();
+        }
+    });
+
+    // 次へボタン
+    document.querySelector('.slide-next').addEventListener('click', function(e) {
+        e.stopPropagation();
+        if (galleryImages.length > 0) {
+            currentSlideIndex = (currentSlideIndex + 1) % galleryImages.length;
+            updateSlideshow();
+        }
+    });
+
+    // キーボード操作
+    document.addEventListener('keydown', function(e) {
+        if (modal.classList.contains('active')) {
+            if (e.key === 'ArrowLeft') {
+                document.querySelector('.slide-prev').click();
+            } else if (e.key === 'ArrowRight') {
+                document.querySelector('.slide-next').click();
+            } else if (e.key === 'Escape') {
+                closeModal();
+            }
+        }
+    });
+
     // モーダルを閉じる
     function closeModal() {
         modal.classList.remove('active');
         document.body.style.overflow = 'auto';
+        currentSlideIndex = 0;
+        galleryImages = [];
     }
 
     if (modalClose) {
@@ -793,13 +1041,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (modalOverlay) {
         modalOverlay.addEventListener('click', closeModal);
     }
-
-    // ESCキーでモーダルを閉じる
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
-            closeModal();
-        }
-    });
 });
 </script>
 

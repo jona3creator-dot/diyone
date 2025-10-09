@@ -18,8 +18,14 @@ add_action('after_setup_theme', 'diyone_theme_setup');
 function diyone_enqueue_scripts() {
     wp_enqueue_style('diyone-style', get_stylesheet_uri(), array(), '1.0.0');
     wp_enqueue_script('diyone-script', get_template_directory_uri() . '/js/script.js', array(), '1.0.0', true);
+    
+    // メディアアップローダー用スクリプト（管理画面のみ）
+    if (is_admin()) {
+        wp_enqueue_media();
+    }
 }
 add_action('wp_enqueue_scripts', 'diyone_enqueue_scripts');
+add_action('admin_enqueue_scripts', 'diyone_enqueue_scripts');
 
 // ポートフォリオカスタム投稿タイプの登録
 function diyone_register_portfolio_post_type() {
@@ -112,7 +118,230 @@ function diyone_register_portfolio_tags() {
 }
 add_action('init', 'diyone_register_portfolio_tags');
 
-// カスタムフィールドの追加（メディアタイプと動画URL）
+// お客様の声カスタム投稿タイプの登録
+function diyone_register_testimonial_post_type() {
+    $labels = array(
+        'name'                  => 'お客様の声',
+        'singular_name'         => 'お客様の声',
+        'menu_name'             => 'お客様の声',
+        'add_new'               => '新規追加',
+        'add_new_item'          => '新規お客様の声を追加',
+        'edit_item'             => 'お客様の声を編集',
+        'new_item'              => '新規お客様の声',
+        'view_item'             => 'お客様の声を表示',
+        'search_items'          => 'お客様の声を検索',
+        'not_found'             => 'お客様の声が見つかりませんでした',
+        'not_found_in_trash'    => 'ゴミ箱にお客様の声はありません',
+    );
+
+    $args = array(
+        'labels'                => $labels,
+        'public'                => false,
+        'has_archive'           => false,
+        'publicly_queryable'    => false,
+        'show_ui'               => true,
+        'show_in_menu'          => true,
+        'query_var'             => true,
+        'rewrite'               => false,
+        'capability_type'       => 'post',
+        'menu_icon'             => 'dashicons-testimonial',
+        'supports'              => array('title', 'editor'),
+        'show_in_rest'          => true,
+    );
+
+    register_post_type('testimonial', $args);
+}
+add_action('init', 'diyone_register_testimonial_post_type');
+
+// お客様の声のカスタムフィールド
+function diyone_add_testimonial_meta_boxes() {
+    add_meta_box(
+        'testimonial_info',
+        'お客様情報',
+        'diyone_testimonial_info_callback',
+        'testimonial',
+        'normal',
+        'high'
+    );
+}
+add_action('add_meta_boxes', 'diyone_add_testimonial_meta_boxes');
+
+// お客様の声カスタムフィールドの表示
+function diyone_testimonial_info_callback($post) {
+    wp_nonce_field('diyone_testimonial_meta_nonce', 'testimonial_meta_nonce');
+    
+    $customer_name = get_post_meta($post->ID, '_testimonial_customer_name', true);
+    $company = get_post_meta($post->ID, '_testimonial_company', true);
+    $service_tag = get_post_meta($post->ID, '_testimonial_service_tag', true);
+    $show_on_top = get_post_meta($post->ID, '_testimonial_show_on_top', true);
+    $display_order = get_post_meta($post->ID, '_testimonial_display_order', true);
+    $profile_image_id = get_post_meta($post->ID, '_testimonial_profile_image', true);
+    $profile_image_url = $profile_image_id ? wp_get_attachment_image_url($profile_image_id, 'thumbnail') : '';
+    ?>
+    <p style="margin-bottom: 20px; color: #666; font-size: 13px;">
+        <strong>使い方:</strong><br>
+        ・タイトル欄に「田中様」「佐藤様」などお客様名を入力<br>
+        ・本文にお客様の声（コメント）を入力<br>
+        ・下記の項目を入力して、「トップページに表示する」にチェックを入れてください
+    </p>
+    
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 10px; font-weight: bold;">プロフィール画像:</label>
+        <div id="profile_image_preview" style="margin-bottom: 10px;">
+            <?php if ($profile_image_url) : ?>
+                <img src="<?php echo esc_url($profile_image_url); ?>" style="max-width: 150px; height: auto; border-radius: 50%; border: 3px solid #FFD700;">
+            <?php else : ?>
+                <div style="width: 150px; height: 150px; background: linear-gradient(135deg, #FFD700, #FFA500); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 3rem;">
+                    <?php echo esc_html($customer_name ? substr($customer_name, 0, 1) : '?'); ?>
+                </div>
+            <?php endif; ?>
+        </div>
+        <input type="hidden" name="testimonial_profile_image" id="testimonial_profile_image" value="<?php echo esc_attr($profile_image_id); ?>">
+        <button type="button" id="upload_profile_image" class="button">画像を選択</button>
+        <button type="button" id="remove_profile_image" class="button" style="<?php echo $profile_image_url ? '' : 'display:none;'; ?>">画像を削除</button>
+        <p style="margin-top: 5px; color: #666; font-size: 13px;">
+            プロフィール画像をアップロードしない場合、下記の「お客様名（アイコン用）」の文字が円形アイコンとして表示されます
+        </p>
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 10px; font-weight: bold;">お客様名（アイコン用）:</label>
+        <input type="text" name="testimonial_customer_name" id="testimonial_customer_name" value="<?php echo esc_attr($customer_name); ?>" style="width: 100%; padding: 8px;" placeholder="例: 田中様" maxlength="2">
+        <p style="margin-top: 5px; color: #666; font-size: 13px;">
+            プロフィール画像がない場合、アイコンの中央に表示される文字を入力（1〜2文字推奨: A, B, 田, 佐藤 など）
+        </p>
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 10px; font-weight: bold;">会社名・業種:</label>
+        <input type="text" name="testimonial_company" value="<?php echo esc_attr($company); ?>" style="width: 100%; padding: 8px;" placeholder="例: 製造業">
+        <p style="margin-top: 5px; color: #666; font-size: 13px;">お客様の業種や会社名を入力</p>
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 10px; font-weight: bold;">サービスタグ:</label>
+        <input type="text" name="testimonial_service_tag" value="<?php echo esc_attr($service_tag); ?>" style="width: 100%; padding: 8px;" placeholder="例: 映像制作">
+        <p style="margin-top: 5px; color: #666; font-size: 13px;">ご利用いただいたサービス名を入力（映像制作、Web制作、SNS運用代行 など）</p>
+    </div>
+    
+    <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 10px; font-weight: bold;">表示順序:</label>
+        <input type="number" name="testimonial_display_order" value="<?php echo esc_attr($display_order ? $display_order : 0); ?>" style="width: 100px; padding: 8px;" min="0">
+        <p style="margin-top: 5px; color: #666; font-size: 13px;">小さい数字ほど先に表示されます（0が最初）</p>
+    </div>
+    
+    <div style="margin-bottom: 20px; padding: 15px; background: #f0f8ff; border-left: 4px solid #FFD700; border-radius: 5px;">
+        <label style="display: flex; align-items: center; cursor: pointer;">
+            <input type="checkbox" name="testimonial_show_on_top" value="1" <?php checked($show_on_top, '1'); ?> style="margin-right: 10px; width: 18px; height: 18px;">
+            <span style="font-weight: bold; font-size: 14px;">トップページに表示する</span>
+        </label>
+        <p style="margin: 10px 0 0 28px; color: #666; font-size: 13px;">
+            チェックを入れると、トップページのお客様の声セクションに表示されます<br>
+            ※最大5件まで表示されます（表示順序の小さい順）
+        </p>
+    </div>
+    
+    <script>
+    jQuery(document).ready(function($) {
+        var profileFrame;
+        
+        // プロフィール画像アップロード
+        $('#upload_profile_image').on('click', function(e) {
+            e.preventDefault();
+            
+            if (profileFrame) {
+                profileFrame.open();
+                return;
+            }
+            
+            profileFrame = wp.media({
+                title: 'プロフィール画像を選択',
+                button: {
+                    text: '画像を使用'
+                },
+                multiple: false
+            });
+            
+            profileFrame.on('select', function() {
+                var attachment = profileFrame.state().get('selection').first().toJSON();
+                $('#testimonial_profile_image').val(attachment.id);
+                $('#profile_image_preview').html('<img src="' + attachment.url + '" style="max-width: 150px; height: auto; border-radius: 50%; border: 3px solid #FFD700;">');
+                $('#remove_profile_image').show();
+            });
+            
+            profileFrame.open();
+        });
+        
+        // プロフィール画像削除
+        $('#remove_profile_image').on('click', function(e) {
+            e.preventDefault();
+            $('#testimonial_profile_image').val('');
+            var customerName = $('#testimonial_customer_name').val();
+            var initial = customerName ? customerName.charAt(0) : '?';
+            $('#profile_image_preview').html('<div style="width: 150px; height: 150px; background: linear-gradient(135deg, #FFD700, #FFA500); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 3rem;">' + initial + '</div>');
+            $(this).hide();
+        });
+        
+        // お客様名が変更されたらプレビューも更新
+        $('#testimonial_customer_name').on('input', function() {
+            if (!$('#testimonial_profile_image').val()) {
+                var initial = $(this).val() ? $(this).val().charAt(0) : '?';
+                $('#profile_image_preview').html('<div style="width: 150px; height: 150px; background: linear-gradient(135deg, #FFD700, #FFA500); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 3rem;">' + initial + '</div>');
+            }
+        });
+    });
+    </script>
+    <?php
+}
+
+// お客様の声カスタムフィールドの保存
+function diyone_save_testimonial_meta($post_id) {
+    if (!isset($_POST['testimonial_meta_nonce']) || !wp_verify_nonce($_POST['testimonial_meta_nonce'], 'diyone_testimonial_meta_nonce')) {
+        return;
+    }
+
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+
+    if (isset($_POST['testimonial_profile_image'])) {
+        $image_id = intval($_POST['testimonial_profile_image']);
+        if ($image_id > 0) {
+            update_post_meta($post_id, '_testimonial_profile_image', $image_id);
+        } else {
+            delete_post_meta($post_id, '_testimonial_profile_image');
+        }
+    }
+
+    if (isset($_POST['testimonial_customer_name'])) {
+        update_post_meta($post_id, '_testimonial_customer_name', sanitize_text_field($_POST['testimonial_customer_name']));
+    }
+
+    if (isset($_POST['testimonial_company'])) {
+        update_post_meta($post_id, '_testimonial_company', sanitize_text_field($_POST['testimonial_company']));
+    }
+
+    if (isset($_POST['testimonial_service_tag'])) {
+        update_post_meta($post_id, '_testimonial_service_tag', sanitize_text_field($_POST['testimonial_service_tag']));
+    }
+
+    if (isset($_POST['testimonial_display_order'])) {
+        update_post_meta($post_id, '_testimonial_display_order', intval($_POST['testimonial_display_order']));
+    }
+
+    if (isset($_POST['testimonial_show_on_top'])) {
+        update_post_meta($post_id, '_testimonial_show_on_top', '1');
+    } else {
+        delete_post_meta($post_id, '_testimonial_show_on_top');
+    }
+}
+add_action('save_post_testimonial', 'diyone_save_testimonial_meta');
+
+// カスタムフィールドの追加（メディアタイプと動画URL、複数画像）
 function diyone_add_portfolio_meta_boxes() {
     add_meta_box(
         'portfolio_media_info',
@@ -132,6 +361,11 @@ function diyone_portfolio_media_callback($post) {
     $media_type = get_post_meta($post->ID, '_portfolio_media_type', true);
     $video_url = get_post_meta($post->ID, '_portfolio_video_url', true);
     $show_on_top = get_post_meta($post->ID, '_portfolio_show_on_top', true);
+    $gallery_images = get_post_meta($post->ID, '_portfolio_gallery_images', true);
+    
+    if (!is_array($gallery_images)) {
+        $gallery_images = array();
+    }
     ?>
     <div style="margin-bottom: 20px;">
         <label style="display: block; margin-bottom: 10px; font-weight: bold;">メディアタイプ:</label>
@@ -140,7 +374,7 @@ function diyone_portfolio_media_callback($post) {
             <option value="video" <?php selected($media_type, 'video'); ?>>動画（YouTube/Instagram/TikTok）</option>
         </select>
         <p style="margin-top: 5px; color: #666; font-size: 13px;">
-            画像の場合: 右サイドバーの「アイキャッチ画像」から画像を設定してください<br>
+            画像の場合: 右サイドバーの「アイキャッチ画像」が1枚目のサムネイルになります。複数画像は下記で追加できます<br>
             動画の場合: 下記に動画URLを入力してください
         </p>
     </div>
@@ -164,10 +398,51 @@ function diyone_portfolio_media_callback($post) {
         </p>
     </div>
     
-    <div style="margin-bottom: 20px; padding: 15px; background: #f0f8ff; border-left: 4px solid #FFD700; border-radius: 5px;">
+    <!-- 複数画像アップロード -->
+    <div id="gallery_images_field" style="margin-bottom: 20px; <?php echo ($media_type === 'image') ? '' : 'display:none;'; ?>">
+        <label style="display: block; margin-bottom: 10px; font-weight: bold; font-size: 14px; color: #0073aa;">📸 ギャラリー画像（2枚目以降）:</label>
+        <div style="background: #f0f8ff; padding: 15px; border-radius: 8px; border: 2px dashed #0073aa; margin-bottom: 15px;">
+            <p style="margin: 0 0 10px 0; color: #666; font-size: 13px; line-height: 1.6;">
+                <strong>🎯 使い方：</strong><br>
+                <strong style="color: #00B894;">1枚目：</strong> 右サイドバーの「アイキャッチ画像」を設定 → サムネイルになります<br>
+                <strong style="color: #0073aa;">2枚目以降：</strong> ここで追加した画像がスライドショーで表示されます<br>
+                <br>
+                <strong>💡 例：</strong> Web制作の場合、トップページ・下層ページ・スマホ表示などを追加
+            </p>
+        </div>
+        
+        <div id="gallery_images_container" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; padding: 10px; background: #fafafa; border-radius: 5px; min-height: 120px;">
+            <?php if (!empty($gallery_images)) : ?>
+                <?php foreach ($gallery_images as $image_id) : ?>
+                    <?php $image_url = wp_get_attachment_image_url($image_id, 'thumbnail'); ?>
+                    <?php if ($image_url) : ?>
+                        <div class="gallery-image-item" style="position: relative; width: 100px; height: 100px; border: 2px solid #0073aa; border-radius: 8px; overflow: hidden;">
+                            <img src="<?php echo esc_url($image_url); ?>" style="width: 100%; height: 100%; object-fit: cover;">
+                            <button type="button" class="remove-gallery-image" data-image-id="<?php echo esc_attr($image_id); ?>" style="position: absolute; top: -5px; right: -5px; background: #dc3545; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 14px; line-height: 1; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">×</button>
+                            <input type="hidden" name="portfolio_gallery_images[]" value="<?php echo esc_attr($image_id); ?>">
+                        </div>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            <?php else : ?>
+                <div style="width: 100%; text-align: center; padding: 30px; color: #999;">
+                    <p style="margin: 0; font-size: 14px;">📷 まだ画像が追加されていません</p>
+                    <p style="margin: 5px 0 0 0; font-size: 12px;">下のボタンから画像を追加してください</p>
+                </div>
+            <?php endif; ?>
+        </div>
+        
+        <button type="button" id="add_gallery_images" class="button button-primary button-large" style="width: 100%; padding: 10px; font-size: 14px; font-weight: bold;">
+            ➕ 画像を追加（複数選択可能）
+        </button>
+        <p style="margin-top: 10px; color: #666; font-size: 12px; text-align: center;">
+            ※ 画像は複数選択できます。ドラッグ&ドロップで並び替えも可能です
+        </p>
+    </div>
+    
+    <div style="margin-bottom: 20px; padding: 15px; background: #fffbea; border-left: 4px solid #FFD700; border-radius: 5px;">
         <label style="display: flex; align-items: center; cursor: pointer;">
             <input type="checkbox" name="portfolio_show_on_top" id="portfolio_show_on_top" value="1" <?php checked($show_on_top, '1'); ?> style="margin-right: 10px; width: 18px; height: 18px;">
-            <span style="font-weight: bold; font-size: 14px;">トップページに表示する</span>
+            <span style="font-weight: bold; font-size: 14px;">⭐ トップページに表示する</span>
         </label>
         <p style="margin: 10px 0 0 28px; color: #666; font-size: 13px;">
             チェックを入れると、トップページのポートフォリオセクションに表示されます<br>
@@ -176,17 +451,89 @@ function diyone_portfolio_media_callback($post) {
     </div>
     
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const mediaTypeSelect = document.getElementById('portfolio_media_type');
-        const videoUrlField = document.getElementById('video_url_field');
-        
-        mediaTypeSelect.addEventListener('change', function() {
-            if (this.value === 'video') {
-                videoUrlField.style.display = 'block';
+    jQuery(document).ready(function($) {
+        // メディアタイプ切り替え
+        $('#portfolio_media_type').on('change', function() {
+            if ($(this).val() === 'video') {
+                $('#video_url_field').slideDown(300);
+                $('#gallery_images_field').slideUp(300);
             } else {
-                videoUrlField.style.display = 'none';
+                $('#video_url_field').slideUp(300);
+                $('#gallery_images_field').slideDown(300);
             }
         });
+        
+        // ギャラリー画像追加
+        var galleryFrame;
+        $('#add_gallery_images').on('click', function(e) {
+            e.preventDefault();
+            
+            if (galleryFrame) {
+                galleryFrame.open();
+                return;
+            }
+            
+            galleryFrame = wp.media({
+                title: '📸 ギャラリー画像を選択',
+                button: {
+                    text: '画像を追加'
+                },
+                multiple: true,
+                library: {
+                    type: 'image'
+                }
+            });
+            
+            galleryFrame.on('select', function() {
+                var attachments = galleryFrame.state().get('selection').toJSON();
+                var container = $('#gallery_images_container');
+                
+                // 「まだ画像が追加されていません」メッセージを削除
+                container.find('div[style*="text-align: center"]').remove();
+                
+                attachments.forEach(function(attachment) {
+                    var imageHtml = '<div class="gallery-image-item" style="position: relative; width: 100px; height: 100px; border: 2px solid #0073aa; border-radius: 8px; overflow: hidden;">' +
+                        '<img src="' + attachment.sizes.thumbnail.url + '" style="width: 100%; height: 100%; object-fit: cover;">' +
+                        '<button type="button" class="remove-gallery-image" data-image-id="' + attachment.id + '" style="position: absolute; top: -5px; right: -5px; background: #dc3545; color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; font-size: 14px; line-height: 1; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.3);">×</button>' +
+                        '<input type="hidden" name="portfolio_gallery_images[]" value="' + attachment.id + '">' +
+                        '</div>';
+                    container.append(imageHtml);
+                });
+                
+                // 成功メッセージ
+                showNotification('✅ 画像を追加しました！', 'success');
+            });
+            
+            galleryFrame.open();
+        });
+        
+        // ギャラリー画像削除
+        $(document).on('click', '.remove-gallery-image', function() {
+            var $item = $(this).closest('.gallery-image-item');
+            $item.fadeOut(300, function() {
+                $(this).remove();
+                
+                // 画像がなくなった場合、メッセージを表示
+                var container = $('#gallery_images_container');
+                if (container.find('.gallery-image-item').length === 0) {
+                    container.html('<div style="width: 100%; text-align: center; padding: 30px; color: #999;"><p style="margin: 0; font-size: 14px;">📷 まだ画像が追加されていません</p><p style="margin: 5px 0 0 0; font-size: 12px;">下のボタンから画像を追加してください</p></div>');
+                }
+            });
+            
+            showNotification('🗑️ 画像を削除しました', 'info');
+        });
+        
+        // 通知表示関数
+        function showNotification(message, type) {
+            var bgColor = type === 'success' ? '#00B894' : '#0073aa';
+            var $notification = $('<div style="position: fixed; top: 32px; right: 20px; background: ' + bgColor + '; color: white; padding: 15px 20px; border-radius: 5px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999999; font-weight: bold;">' + message + '</div>');
+            $('body').append($notification);
+            setTimeout(function() {
+                $notification.fadeOut(300, function() {
+                    $(this).remove();
+                });
+            }, 2000);
+        }
     });
     </script>
     <?php
@@ -214,6 +561,14 @@ function diyone_save_portfolio_meta($post_id) {
         update_post_meta($post_id, '_portfolio_video_url', esc_url_raw($_POST['portfolio_video_url']));
     }
 
+    // ギャラリー画像の保存
+    if (isset($_POST['portfolio_gallery_images']) && is_array($_POST['portfolio_gallery_images'])) {
+        $gallery_images = array_map('intval', $_POST['portfolio_gallery_images']);
+        update_post_meta($post_id, '_portfolio_gallery_images', $gallery_images);
+    } else {
+        delete_post_meta($post_id, '_portfolio_gallery_images');
+    }
+
     // トップページ表示チェックボックスの保存
     if (isset($_POST['portfolio_show_on_top'])) {
         update_post_meta($post_id, '_portfolio_show_on_top', '1');
@@ -222,6 +577,53 @@ function diyone_save_portfolio_meta($post_id) {
     }
 }
 add_action('save_post_portfolio', 'diyone_save_portfolio_meta');
+
+// ポートフォリオのギャラリー画像を取得する関数（修正版）
+function diyone_get_portfolio_gallery_images($post_id) {
+    $gallery_images = get_post_meta($post_id, '_portfolio_gallery_images', true);
+    
+    if (!is_array($gallery_images)) {
+        $gallery_images = array();
+    }
+    
+    $images = array();
+    
+    // アイキャッチ画像を1枚目として追加
+    if (has_post_thumbnail($post_id)) {
+        $thumbnail_id = get_post_thumbnail_id($post_id);
+        $thumbnail_url = get_the_post_thumbnail_url($post_id, 'large');
+        $full_url = get_the_post_thumbnail_url($post_id, 'full');
+        
+        if ($thumbnail_url && $full_url) {
+            $images[] = array(
+                'id' => $thumbnail_id,
+                'url' => $thumbnail_url,
+                'full_url' => $full_url
+            );
+        }
+    }
+    
+    // ギャラリー画像を追加（2枚目以降）
+    if (!empty($gallery_images)) {
+        foreach ($gallery_images as $image_id) {
+            $image_id = intval($image_id);
+            if ($image_id > 0) {
+                $image_url = wp_get_attachment_image_url($image_id, 'large');
+                $full_url = wp_get_attachment_image_url($image_id, 'full');
+                
+                if ($image_url && $full_url) {
+                    $images[] = array(
+                        'id' => $image_id,
+                        'url' => $image_url,
+                        'full_url' => $full_url
+                    );
+                }
+            }
+        }
+    }
+    
+    return $images;
+}
 
 // 動画URLからサムネイルを取得する関数
 function diyone_get_video_thumbnail($url) {
