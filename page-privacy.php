@@ -267,12 +267,15 @@ get_header(); ?>
     font-size: 1.2rem;
 }
 .privacy-content a {
-    color: #FFD700;
+    color: #0066cc;
     text-decoration: underline;
     transition: color 0.3s ease;
 }
 .privacy-content a:hover {
-    color: #FFA500;
+    color: #0052a3;
+}
+.privacy-content a:visited {
+    color: #551a8b;
 }
 @media (max-width: 768px) {
     .privacy-content {
