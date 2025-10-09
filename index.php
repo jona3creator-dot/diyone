@@ -1,6 +1,6 @@
 <?php
 /**
- * The main template file - DIYONE Corporate Website (修正版)
+ * The main template file - DIYONE Corporate Website (完全版)
  */
 get_header(); ?>
 
@@ -238,132 +238,84 @@ get_header(); ?>
         </div>
     </section>
 
-    <!-- 実績（Portfolio） -->
+    <!-- 実績（Portfolio） - トップページ表示用 -->
     <section id="portfolio" class="section portfolio">
         <div class="container">
             <h2 class="section-title fade-in">Portfolio</h2>
             <p class="section-subtitle fade-in">これまでの制作実績をご紹介</p>
             
             <div class="portfolio-grid">
-                <!-- YouTube動画制作 -->
-                <div class="portfolio-item fade-in">
-                    <div class="portfolio-image video-thumb">
-                        <div class="play-button">▶</div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>企業PR動画制作</h4>
-                        <p>BtoB企業向けの会社紹介動画を制作。視聴完了率85%を達成</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">映像制作</span>
-                            <span class="portfolio-tag">企業PR</span>
-                        </div>
-                    </div>
-                </div>
+                <?php
+                // 「トップページに表示」にチェックが入っている8件を取得
+                $portfolio_args = array(
+                    'post_type' => 'portfolio',
+                    'posts_per_page' => 8,
+                    'orderby' => 'date',
+                    'order' => 'DESC',
+                    'meta_query' => array(
+                        array(
+                            'key' => '_portfolio_show_on_top',
+                            'value' => '1',
+                            'compare' => '='
+                        )
+                    )
+                );
+                $portfolio_query = new WP_Query($portfolio_args);
 
-                <!-- デザイン制作 -->
+                if ($portfolio_query->have_posts()) :
+                    while ($portfolio_query->have_posts()) : $portfolio_query->the_post();
+                        $media_type = get_post_meta(get_the_ID(), '_portfolio_media_type', true);
+                        $video_url = get_post_meta(get_the_ID(), '_portfolio_video_url', true);
+                        $categories = get_the_terms(get_the_ID(), 'portfolio_category');
+                        $tags = get_the_terms(get_the_ID(), 'portfolio_tag');
+                        
+                        // サムネイル画像の取得
+                        if ($media_type === 'video' && !empty($video_url)) {
+                            $thumbnail = diyone_get_video_thumbnail($video_url);
+                            $thumbnail_html = $thumbnail ? '<img src="' . esc_url($thumbnail) . '" alt="' . esc_attr(get_the_title()) . '">' : '<div class="play-button">▶</div>';
+                        } else {
+                            $thumbnail_html = get_the_post_thumbnail(get_the_ID(), 'large');
+                            if (empty($thumbnail_html)) {
+                                $thumbnail_html = '<div class="no-image">No Image</div>';
+                            }
+                        }
+                        
+                        // カテゴリーからクラス名を生成
+                        $category_class = 'default-thumb';
+                        if ($categories && !is_wp_error($categories)) {
+                            $cat_slug = $categories[0]->slug;
+                            $category_class = $cat_slug . '-thumb';
+                        }
+                ?>
                 <div class="portfolio-item fade-in">
-                    <div class="portfolio-image design-thumb">
-                        <div class="design-icon">🎨</div>
+                    <div class="portfolio-image <?php echo esc_attr($category_class); ?>">
+                        <?php echo $thumbnail_html; ?>
+                        <?php if ($media_type === 'video') : ?>
+                            <div class="play-button-overlay">▶</div>
+                        <?php endif; ?>
                     </div>
                     <div class="portfolio-content">
-                        <h4>ブランドロゴデザイン</h4>
-                        <p>スタートアップ企業のロゴ・CI設計を担当。ブランド認知度40%向上</p>
+                        <h4><?php the_title(); ?></h4>
+                        <p><?php echo wp_strip_all_tags(get_the_content()); ?></p>
                         <div class="portfolio-tags">
-                            <span class="portfolio-tag">ブランディング</span>
-                            <span class="portfolio-tag">ロゴ制作</span>
+                            <?php if ($tags && !is_wp_error($tags)) : ?>
+                                <?php foreach ($tags as $tag) : ?>
+                                    <span class="portfolio-tag"><?php echo esc_html($tag->name); ?></span>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
-
-                <!-- プレゼン資料 -->
-                <div class="portfolio-item fade-in">
-                    <div class="portfolio-image presentation-thumb">
-                        <div class="presentation-icon">📊</div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>営業資料作成</h4>
-                        <p>プレゼンテーション資料を戦略的に設計。成約率30%向上に貢献</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">資料作成</span>
-                            <span class="portfolio-tag">営業支援</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SNS運用 -->
-                <div class="portfolio-item fade-in">
-                    <div class="portfolio-image sns-thumb">
-                        <div class="sns-icon">📱</div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>Instagram運用代行</h4>
-                        <p>カフェのInstagramアカウント運用。フォロワー数を6ヶ月で3倍に増加</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">SNS運用</span>
-                            <span class="portfolio-tag">Instagram</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Web制作 -->
-                <div class="portfolio-item fade-in">
-                    <div class="portfolio-image web-thumb">
-                        <div class="web-icon">💻</div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>コーポレートサイト</h4>
-                        <p>建設会社のコーポレートサイトをWordPressで制作。お問い合わせ数200%向上</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">Web制作</span>
-                            <span class="portfolio-tag">WordPress</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- YouTube運営 -->
-                <div class="portfolio-item fade-in">
-                    <div class="portfolio-image youtube-thumb">
-                        <div class="play-button">▶</div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>YouTubeチャンネル運営</h4>
-                        <p>教育系YouTubeチャンネル立ち上げ。チャンネル登録者1万人達成</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">YouTube運営</span>
-                            <span class="portfolio-tag">教育コンテンツ</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 広告運用 -->
-                <div class="portfolio-item fade-in">
-                    <div class="portfolio-image ad-thumb">
-                        <div class="ad-icon">📊</div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>Meta広告運用</h4>
-                        <p>ECサイトのMeta広告を運用。ROAS300%を達成し売上大幅向上</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">広告運用</span>
-                            <span class="portfolio-tag">Meta広告</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- オンライン事務 -->
-                <div class="portfolio-item fade-in">
-                    <div class="portfolio-image office-thumb">
-                        <div class="office-icon">💼</div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>データ入力・整理</h4>
-                        <p>大手企業の顧客データベース整理。作業効率を50%向上させました</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">オンライン事務</span>
-                            <span class="portfolio-tag">データ整理</span>
-                        </div>
-                    </div>
-                </div>
+                <?php
+                    endwhile;
+                    wp_reset_postdata();
+                else :
+                ?>
+                    <p style="grid-column: 1/-1; text-align: center; color: #666;">
+                        ポートフォリオがまだ登録されていません。<br>
+                        <small>※管理画面で「トップページに表示する」にチェックを入れたポートフォリオが表示されます</small>
+                    </p>
+                <?php endif; ?>
             </div>
 
             <!-- もっと見るボタン -->
@@ -650,6 +602,34 @@ get_header(); ?>
 </main>
 
 <style>
+.play-button-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    color: white;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+}
+
+.portfolio-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #e0e0e0, #f5f5f5);
+    color: #999;
+    font-weight: bold;
+}
+
 /* サービスカード開閉の修正 */
 .service-toggle {
     width: 30px;
@@ -668,10 +648,6 @@ get_header(); ?>
 
 .service-card.active .service-toggle {
     transform: rotate(45deg);
-}
-
-.service-card.active .service-toggle::after {
-    content: '-';
 }
 
 /* ポートフォリオセクション */
@@ -712,9 +688,10 @@ get_header(); ?>
     font-size: 1.5rem;
     color: white;
     font-weight: bold;
+    overflow: hidden;
 }
 
-.video-thumb {
+.video-thumb, .default-thumb {
     background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
 }
 
@@ -722,38 +699,24 @@ get_header(); ?>
     background: linear-gradient(135deg, #4ECDC4, #6FDDDD);
 }
 
-.presentation-thumb {
-    background: linear-gradient(135deg, #A8E6CF, #C3F0CA);
+.web-thumb {
+    background: linear-gradient(135deg, #FF8C42, #FFAB66);
 }
 
 .sns-thumb {
     background: linear-gradient(135deg, #FFD93D, #FFE066);
 }
 
-.web-thumb {
-    background: linear-gradient(135deg, #FF8C42, #FFAB66);
-}
-
 .youtube-thumb {
     background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
 }
 
-.ad-thumb {
+.ads-thumb {
     background: linear-gradient(135deg, #6C5CE7, #A29BFE);
 }
 
 .office-thumb {
     background: linear-gradient(135deg, #00B894, #00CEC9);
-}
-
-.play-button,
-.design-icon,
-.presentation-icon,
-.sns-icon,
-.web-icon,
-.ad-icon,
-.office-icon {
-    font-size: 2rem;
 }
 
 .portfolio-content {
@@ -951,7 +914,7 @@ get_header(); ?>
 @media (max-width: 768px) {
     .portfolio-grid {
         grid-template-columns: 1fr;
-        grid-template-rows: repeat(8, 1fr);
+        grid-template-rows: auto;
     }
     
     .testimonial-item {
@@ -1029,8 +992,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ナビゲーションボタン
-    document.querySelector('.slider-btn.next').addEventListener('click', nextSlide);
-    document.querySelector('.slider-btn.prev').addEventListener('click', prevSlide);
+    if (document.querySelector('.slider-btn.next')) {
+        document.querySelector('.slider-btn.next').addEventListener('click', nextSlide);
+        document.querySelector('.slider-btn.prev').addEventListener('click', prevSlide);
+    }
 
     // ドットナビゲーション
     dots.forEach((dot, index) => {
@@ -1041,7 +1006,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // 自動スライド（5秒間隔）
-    setInterval(nextSlide, 5000);
+    if (testimonials.length > 0) {
+        setInterval(nextSlide, 5000);
+    }
 });
 </script>
 

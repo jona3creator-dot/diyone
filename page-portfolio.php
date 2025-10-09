@@ -1,7 +1,7 @@
 <?php
 /**
  * Template Name: Portfolio Page
- * Portfolio Page Template - DIYONE Corporate Website
+ * Portfolio Page Template - DIYONE Corporate Website (動的表示版)
  */
 get_header(); ?>
 
@@ -21,13 +21,23 @@ get_header(); ?>
         <div class="container">
             <div class="filter-tabs">
                 <button class="category-tab active" data-category="all">全て</button>
-                <button class="category-tab" data-category="video">映像制作</button>
-                <button class="category-tab" data-category="design">デザイン制作</button>
-                <button class="category-tab" data-category="web">Web制作</button>
-                <button class="category-tab" data-category="sns">SNS運用</button>
-                <button class="category-tab" data-category="ads">広告運用</button>
-                <button class="category-tab" data-category="youtube">YouTube運営とM&A</button>
-
+                <?php
+                // カテゴリー一覧を取得
+                $categories = get_terms(array(
+                    'taxonomy' => 'portfolio_category',
+                    'hide_empty' => true,
+                ));
+                
+                if (!empty($categories) && !is_wp_error($categories)) :
+                    foreach ($categories as $category) :
+                ?>
+                    <button class="category-tab" data-category="<?php echo esc_attr($category->slug); ?>">
+                        <?php echo esc_html($category->name); ?>
+                    </button>
+                <?php
+                    endforeach;
+                endif;
+                ?>
             </div>
         </div>
     </section>
@@ -36,235 +46,72 @@ get_header(); ?>
     <section class="portfolio-showcase section">
         <div class="container">
             <div class="portfolio-grid">
-                <!-- 映像制作 -->
-                <div class="portfolio-item fade-in" data-category="video">
-                    <div class="portfolio-image video-thumb">
-                        <div class="play-button">▶</div>
-                        <div class="portfolio-overlay">
-                            <h3>企業PR動画制作</h3>
-                            <p>製造業A社様</p>
-                        </div>
+                <?php
+                // 全ポートフォリオを取得
+                $portfolio_args = array(
+                    'post_type' => 'portfolio',
+                    'posts_per_page' => -1, // 全件表示
+                    'orderby' => 'date',
+                    'order' => 'DESC'
+                );
+                $portfolio_query = new WP_Query($portfolio_args);
+
+                if ($portfolio_query->have_posts()) :
+                    while ($portfolio_query->have_posts()) : $portfolio_query->the_post();
+                        $media_type = get_post_meta(get_the_ID(), '_portfolio_media_type', true);
+                        $video_url = get_post_meta(get_the_ID(), '_portfolio_video_url', true);
+                        $categories = get_the_terms(get_the_ID(), 'portfolio_category');
+                        $tags = get_the_terms(get_the_ID(), 'portfolio_tag');
+                        
+                        // カテゴリーのスラッグを取得（フィルター用）
+                        $category_slug = '';
+                        $category_class = 'default-thumb';
+                        if ($categories && !is_wp_error($categories)) {
+                            $category_slug = $categories[0]->slug;
+                            $category_class = $category_slug . '-thumb';
+                        }
+                        
+                        // サムネイル画像の取得
+                        if ($media_type === 'video' && !empty($video_url)) {
+                            $thumbnail = diyone_get_video_thumbnail($video_url);
+                            $thumbnail_html = $thumbnail ? '<img src="' . esc_url($thumbnail) . '" alt="' . esc_attr(get_the_title()) . '">' : '<div class="play-button">▶</div>';
+                        } else {
+                            $thumbnail_html = get_the_post_thumbnail(get_the_ID(), 'large');
+                            if (empty($thumbnail_html)) {
+                                $thumbnail_html = '<div class="no-image">No Image</div>';
+                            }
+                        }
+                ?>
+                <div class="portfolio-item fade-in" 
+                     data-category="<?php echo esc_attr($category_slug); ?>"
+                     data-portfolio-id="<?php echo get_the_ID(); ?>" 
+                     data-media-type="<?php echo esc_attr($media_type); ?>" 
+                     data-video-url="<?php echo esc_attr($video_url); ?>">
+                    <div class="portfolio-image <?php echo esc_attr($category_class); ?>">
+                        <?php echo $thumbnail_html; ?>
+                        <?php if ($media_type === 'video') : ?>
+                            <div class="play-button-overlay">▶</div>
+                        <?php endif; ?>
                     </div>
                     <div class="portfolio-content">
-                        <h4>企業紹介動画</h4>
-                        <p>製造業A社様の企業理念と技術力をアピールする3分間のPR動画を制作。工場見学から社員インタビューまで包括的に撮影。</p>
+                        <h4><?php the_title(); ?></h4>
+                        <p><?php echo wp_strip_all_tags(get_the_content()); ?></p>
                         <div class="portfolio-tags">
-                            <span class="portfolio-tag">企業PR</span>
-                            <span class="portfolio-tag">撮影</span>
-                            <span class="portfolio-tag">編集</span>
+                            <?php if ($tags && !is_wp_error($tags)) : ?>
+                                <?php foreach ($tags as $tag) : ?>
+                                    <span class="portfolio-tag"><?php echo esc_html($tag->name); ?></span>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
-
-                <div class="portfolio-item fade-in" data-category="video">
-                    <div class="portfolio-image video-thumb">
-                        <div class="play-button">▶</div>
-                        <div class="portfolio-overlay">
-                            <h3>商品紹介動画</h3>
-                            <p>小売業B社様</p>
-                        </div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>新商品プロモーション動画</h4>
-                        <p>新商品のローンチに合わせたプロモーション動画。商品の特長を分かりやすく伝える構成で制作。</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">商品PR</span>
-                            <span class="portfolio-tag">プロモーション</span>
-                            <span class="portfolio-tag">撮影</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- デザイン制作 -->
-                <div class="portfolio-item fade-in" data-category="design">
-                    <div class="portfolio-image design-thumb">
-                        <div class="portfolio-overlay">
-                            <h3>ブランドロゴデザイン</h3>
-                            <p>IT企業C社様</p>
-                        </div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>コーポレートアイデンティティ</h4>
-                        <p>IT企業のブランドロゴから名刺、会社案内パンフレットまで一貫したデザインで制作。</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">ロゴデザイン</span>
-                            <span class="portfolio-tag">CI/VI</span>
-                            <span class="portfolio-tag">印刷物</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="portfolio-item fade-in" data-category="design">
-                    <div class="portfolio-image design-thumb">
-                        <div class="portfolio-overlay">
-                            <h3>Webバナー制作</h3>
-                            <p>通販サイトD社様</p>
-                        </div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>キャンペーンバナー</h4>
-                        <p>季節のキャンペーンに合わせたWebバナーを複数パターン制作。CTR向上に貢献。</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">Webバナー</span>
-                            <span class="portfolio-tag">キャンペーン</span>
-                            <span class="portfolio-tag">デジタル広告</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Web制作 -->
-                <div class="portfolio-item fade-in" data-category="web">
-                    <div class="portfolio-image web-thumb">
-                        <div class="portfolio-overlay">
-                            <h3>コーポレートサイト</h3>
-                            <p>建設会社I社様</p>
-                        </div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>建設会社のコーポレートサイト</h4>
-                        <p>建設会社の信頼性を伝えるコーポレートサイトをWordPressで制作。レスポンシブ対応。</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">WordPress</span>
-                            <span class="portfolio-tag">コーポレートサイト</span>
-                            <span class="portfolio-tag">レスポンシブ</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="portfolio-item fade-in" data-category="web">
-                    <div class="portfolio-image web-thumb">
-                        <div class="portfolio-overlay">
-                            <h3>ECサイト構築</h3>
-                            <p>アパレルJ店様</p>
-                        </div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>アパレルECサイト</h4>
-                        <p>アパレルブランドのECサイトをShopifyで構築。決済システムから在庫管理まで連携。</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">Shopify</span>
-                            <span class="portfolio-tag">ECサイト</span>
-                            <span class="portfolio-tag">アパレル</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- SNS運用 -->
-                <div class="portfolio-item fade-in" data-category="sns">
-                    <div class="portfolio-image sns-thumb">
-                        <div class="portfolio-overlay">
-                            <h3>Instagram運用代行</h3>
-                            <p>カフェE店様</p>
-                        </div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>カフェのInstagram運用</h4>
-                        <p>地域密着型カフェのInstagramアカウント運用。フォロワー数を6ヶ月で3倍に増加。</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">Instagram</span>
-                            <span class="portfolio-tag">コンテンツ制作</span>
-                            <span class="portfolio-tag">投稿代行</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="portfolio-item fade-in" data-category="sns">
-                    <div class="portfolio-image sns-thumb">
-                        <div class="portfolio-overlay">
-                            <h3>TikTok動画制作</h3>
-                            <p>美容サロンF様</p>
-                        </div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>美容サロンのTikTok動画</h4>
-                        <p>美容サロンの施術風景やビフォーアフターをTikTok向けにショート動画として制作。</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">TikTok</span>
-                            <span class="portfolio-tag">ショート動画</span>
-                            <span class="portfolio-tag">美容</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 広告運用 -->
-                <div class="portfolio-item fade-in" data-category="ads">
-                    <div class="portfolio-image ads-thumb">
-                        <div class="ads-icon">📊</div>
-                        <div class="portfolio-overlay">
-                            <h3>Meta広告運用</h3>
-                            <p>ECサイトK社様</p>
-                        </div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>Meta広告運用</h4>
-                        <p>ECサイトのMeta広告を運用。ROAS300%を達成し売上大幅向上に貢献。</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">Meta広告</span>
-                            <span class="portfolio-tag">ROAS改善</span>
-                            <span class="portfolio-tag">EC連携</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="portfolio-item fade-in" data-category="ads">
-                    <div class="portfolio-image ads-thumb">
-                        <div class="ads-icon">📈</div>
-                        <div class="portfolio-overlay">
-                            <h3>Google広告運用</h3>
-                            <p>サービス業L社様</p>
-                        </div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>Google広告とGA4分析</h4>
-                        <p>Google広告の運用とGA4を活用した詳細分析により、コンバージョン率を大幅改善。</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">Google広告</span>
-                            <span class="portfolio-tag">GA4分析</span>
-                            <span class="portfolio-tag">CV改善</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- YouTube運営とM&A -->
-                <div class="portfolio-item fade-in" data-category="youtube">
-                    <div class="portfolio-image youtube-thumb">
-                        <div class="play-button">▶</div>
-                        <div class="portfolio-overlay">
-                            <h3>YouTubeチャンネル運営</h3>
-                            <p>教育系G社様</p>
-                        </div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>教育系YouTubeチャンネル</h4>
-                        <p>教育コンテンツのYouTubeチャンネル立ち上げから運営まで。チャンネル登録者1万人達成。</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">YouTube運営</span>
-                            <span class="portfolio-tag">教育コンテンツ</span>
-                            <span class="portfolio-tag">チャンネル設計</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="portfolio-item fade-in" data-category="youtube">
-                    <div class="portfolio-image youtube-thumb">
-                        <div class="play-button">▶</div>
-                        <div class="portfolio-overlay">
-                            <h3>商品レビュー動画</h3>
-                            <p>EC事業H社様</p>
-                        </div>
-                    </div>
-                    <div class="portfolio-content">
-                        <h4>商品レビューチャンネル</h4>
-                        <p>EC事業者様の商品レビュー動画を定期的に制作。購入率向上に大きく貢献。</p>
-                        <div class="portfolio-tags">
-                            <span class="portfolio-tag">商品レビュー</span>
-                            <span class="portfolio-tag">EC連携</span>
-                            <span class="portfolio-tag">動画制作</span>
-                        </div>
-                    </div>
-                </div>
-
-
+                <?php
+                    endwhile;
+                    wp_reset_postdata();
+                else :
+                ?>
+                    <p style="grid-column: 1/-1; text-align: center; color: #666;">ポートフォリオがまだ登録されていません。</p>
+                <?php endif; ?>
             </div>
 
             <!-- もっと見るボタン -->
@@ -350,6 +197,22 @@ get_header(); ?>
     </section>
 </main>
 
+<!-- ポートフォリオモーダル -->
+<div id="portfolio-modal" class="portfolio-modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <button class="modal-close" aria-label="閉じる">&times;</button>
+        <div class="modal-body">
+            <div class="modal-media"></div>
+            <div class="modal-info">
+                <h3 class="modal-title"></h3>
+                <div class="modal-description"></div>
+                <div class="modal-tags"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
 /* ページヘッダー */
 .page-hero {
@@ -411,7 +274,7 @@ get_header(); ?>
 
 .portfolio-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr); /* 常に3列表示 */
+    grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
     margin-bottom: 3rem;
 }
@@ -424,6 +287,7 @@ get_header(); ?>
     transition: all 0.3s ease;
     opacity: 1;
     transform: scale(1);
+    cursor: pointer;
 }
 
 .portfolio-item.hidden {
@@ -446,7 +310,13 @@ get_header(); ?>
     justify-content: center;
 }
 
-.video-thumb {
+.portfolio-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.video-thumb, .default-thumb {
     background: linear-gradient(135deg, #FF6B6B, #FF8E8E);
 }
 
@@ -475,29 +345,31 @@ get_header(); ?>
 }
 
 .play-button,
-.ads-icon {
+.play-button-overlay {
     font-size: 2rem;
     color: white;
 }
 
-.portfolio-overlay {
+.play-button-overlay {
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    padding: 2rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    opacity: 0;
-    transition: all 0.3s ease;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3rem;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    pointer-events: none;
+    z-index: 2;
 }
 
-.portfolio-item:hover .portfolio-overlay {
-    opacity: 1;
+.no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #e0e0e0, #f5f5f5);
+    color: #999;
+    font-weight: bold;
 }
 
 .portfolio-content {
@@ -648,6 +520,135 @@ get_header(); ?>
     line-height: 1.6;
 }
 
+/* ポートフォリオモーダル */
+.portfolio-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+}
+
+.portfolio-modal.active {
+    display: block;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    cursor: pointer;
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 20px;
+    max-width: 900px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    z-index: 10001;
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10002;
+}
+
+.modal-close:hover {
+    background: rgba(0, 0, 0, 0.8);
+    transform: rotate(90deg);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.modal-media {
+    margin-bottom: 2rem;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.modal-media img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.modal-media iframe,
+.modal-media blockquote {
+    width: 100%;
+    min-height: 400px;
+}
+
+.modal-media .tiktok-embed {
+    margin: 0 auto;
+}
+
+.modal-media .instagram-media {
+    margin: 0 auto !important;
+}
+
+/* 外部リンクボタンのホバーエフェクト */
+.modal-media a[target="_blank"] {
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+.modal-media a[target="_blank"]:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4) !important;
+}
+
+.modal-title {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.modal-description {
+    color: #666;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+}
+
+.modal-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.modal-tags .portfolio-tag {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
 /* レスポンシブ */
 @media (max-width: 768px) {
     .page-title {
@@ -664,7 +665,7 @@ get_header(); ?>
     }
     
     .portfolio-grid {
-        grid-template-columns: 1fr; /* スマホは1列 */
+        grid-template-columns: 1fr;
     }
     
     .process-grid {
@@ -678,6 +679,20 @@ get_header(); ?>
     
     .results-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .modal-media iframe,
+    .modal-media blockquote {
+        min-height: 300px;
     }
 }
 
@@ -695,6 +710,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const filterTabs = document.querySelectorAll('.category-tab');
     const portfolioItems = document.querySelectorAll('.portfolio-item');
 
+    // フィルター機能
     filterTabs.forEach(tab => {
         tab.addEventListener('click', function() {
             const category = this.getAttribute('data-category');
@@ -712,6 +728,77 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         });
+    });
+
+    // モーダル機能
+    const modal = document.getElementById('portfolio-modal');
+    const modalClose = document.querySelector('.modal-close');
+    const modalOverlay = document.querySelector('.modal-overlay');
+
+    portfolioItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const portfolioId = this.dataset.portfolioId;
+            const mediaType = this.dataset.mediaType;
+            const videoUrl = this.dataset.videoUrl;
+            const title = this.querySelector('h4').textContent;
+            const description = this.querySelector('.portfolio-content p').textContent;
+            const tags = this.querySelectorAll('.portfolio-tag');
+            
+            // モーダルにコンテンツを設定
+            document.querySelector('.modal-title').textContent = title;
+            document.querySelector('.modal-description').textContent = description;
+            
+            // タグを設定
+            const modalTags = document.querySelector('.modal-tags');
+            modalTags.innerHTML = '';
+            tags.forEach(tag => {
+                modalTags.innerHTML += '<span class="portfolio-tag">' + tag.textContent + '</span>';
+            });
+            
+            // メディアを設定
+            const modalMedia = document.querySelector('.modal-media');
+            if (mediaType === 'video' && videoUrl) {
+                // 動画埋め込み用のAJAXリクエスト
+                fetch('<?php echo admin_url("admin-ajax.php"); ?>?action=get_video_embed&video_url=' + encodeURIComponent(videoUrl))
+                    .then(response => response.text())
+                    .then(html => {
+                        modalMedia.innerHTML = html;
+                    });
+            } else {
+                // 画像表示
+                const img = this.querySelector('.portfolio-image img');
+                if (img) {
+                    modalMedia.innerHTML = '<img src="' + img.src + '" alt="' + title + '">';
+                } else {
+                    modalMedia.innerHTML = '<p>画像がありません</p>';
+                }
+            }
+            
+            // モーダル表示
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+
+    // モーダルを閉じる
+    function closeModal() {
+        modal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+    }
+
+    if (modalClose) {
+        modalClose.addEventListener('click', closeModal);
+    }
+    
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', closeModal);
+    }
+
+    // ESCキーでモーダルを閉じる
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeModal();
+        }
     });
 });
 </script>
