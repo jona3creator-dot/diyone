@@ -1,6 +1,6 @@
 <?php
 /**
- * The main template file - DIYONE Corporate Website (完全版)
+ * The main template file - DIYONE Corporate Website (完全修正版)
  */
 get_header(); ?>
 
@@ -268,6 +268,7 @@ get_header(); ?>
                         $video_url = get_post_meta(get_the_ID(), '_portfolio_video_url', true);
                         $categories = get_the_terms(get_the_ID(), 'portfolio_category');
                         $tags = get_the_terms(get_the_ID(), 'portfolio_tag');
+                        $gallery_images = diyone_get_portfolio_gallery_images(get_the_ID());
                         
                         // サムネイル画像の取得
                         if ($media_type === 'video' && !empty($video_url)) {
@@ -286,12 +287,31 @@ get_header(); ?>
                             $cat_slug = $categories[0]->slug;
                             $category_class = $cat_slug . '-thumb';
                         }
+                        
+                        // ギャラリー画像のデータを準備
+                        $gallery_data = '';
+                        if (!empty($gallery_images)) {
+                            $gallery_data = 'data-gallery=\'' . esc_attr(json_encode($gallery_images)) . '\'';
+                        }
                 ?>
-                <div class="portfolio-item fade-in">
+                <div class="portfolio-item fade-in" 
+                     data-portfolio-id="<?php echo get_the_ID(); ?>" 
+                     data-media-type="<?php echo esc_attr($media_type); ?>" 
+                     data-video-url="<?php echo esc_attr($video_url); ?>"
+                     <?php echo $gallery_data; ?>>
                     <div class="portfolio-image <?php echo esc_attr($category_class); ?>">
                         <?php echo $thumbnail_html; ?>
                         <?php if ($media_type === 'video') : ?>
                             <div class="play-button-overlay">▶</div>
+                        <?php elseif (count($gallery_images) > 1) : ?>
+                            <div class="gallery-badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                    <polyline points="21 15 16 10 5 21"></polyline>
+                                </svg>
+                                <?php echo count($gallery_images); ?>
+                            </div>
                         <?php endif; ?>
                     </div>
                     <div class="portfolio-content">
@@ -335,6 +355,7 @@ get_header(); ?>
                 <div class="testimonial-wrapper">
                     <!-- お客様の声1 -->
                     <div class="testimonial-item active">
+                        <div class="testimonial-tag">映像制作</div>
                         <div class="testimonial-content">
                             <div class="quote">"</div>
                             <p>迅速で丁寧な対応に大変満足しています。動画制作から運用まで一貫してお願いできるので、非常に助かっています。品質も期待以上でした。</p>
@@ -346,13 +367,13 @@ get_header(); ?>
                             <div class="author-info">
                                 <div class="author-name">田中様</div>
                                 <div class="author-company">製造業</div>
-                                <div class="author-service">映像制作</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- お客様の声2 -->
                     <div class="testimonial-item">
+                        <div class="testimonial-tag">SNS運用代行</div>
                         <div class="testimonial-content">
                             <div class="quote">"</div>
                             <p>SNS運用を任せてから、フォロワー数が大幅に増加し、売上にも直結しています。戦略的な運用で成果が目に見えて分かります。</p>
@@ -364,13 +385,13 @@ get_header(); ?>
                             <div class="author-info">
                                 <div class="author-name">佐藤様</div>
                                 <div class="author-company">小売業</div>
-                                <div class="author-service">SNS運用代行</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- お客様の声3 -->
                     <div class="testimonial-item">
+                        <div class="testimonial-tag">デザイン制作</div>
                         <div class="testimonial-content">
                             <div class="quote">"</div>
                             <p>デザインのクオリティが高く、ブランドイメージの向上につながりました。細かい要望にも柔軟に対応していただけました。</p>
@@ -382,13 +403,13 @@ get_header(); ?>
                             <div class="author-info">
                                 <div class="author-name">山田様</div>
                                 <div class="author-company">IT企業</div>
-                                <div class="author-service">デザイン制作</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- お客様の声4 -->
                     <div class="testimonial-item">
+                        <div class="testimonial-tag">YouTube運営</div>
                         <div class="testimonial-content">
                             <div class="quote">"</div>
                             <p>YouTubeチャンネルの運営をお願いして大正解でした。登録者数が順調に伸び、収益化まで達成できました。</p>
@@ -400,13 +421,13 @@ get_header(); ?>
                             <div class="author-info">
                                 <div class="author-name">鈴木様</div>
                                 <div class="author-company">教育事業</div>
-                                <div class="author-service">YouTube運営</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- お客様の声5 -->
                     <div class="testimonial-item">
+                        <div class="testimonial-tag">Web制作</div>
                         <div class="testimonial-content">
                             <div class="quote">"</div>
                             <p>Web制作からSEO対策まで一括でお任せできて助かりました。おかげでお問い合わせ数が大幅に増加しています。</p>
@@ -418,7 +439,6 @@ get_header(); ?>
                             <div class="author-info">
                                 <div class="author-name">高橋様</div>
                                 <div class="author-company">建設業</div>
-                                <div class="author-service">Web制作</div>
                             </div>
                         </div>
                     </div>
@@ -601,6 +621,32 @@ get_header(); ?>
     </section>
 </main>
 
+<!-- ポートフォリオモーダル -->
+<div id="portfolio-modal" class="portfolio-modal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+        <button class="modal-close" aria-label="閉じる">&times;</button>
+        <div class="modal-body">
+            <div class="modal-media">
+                <!-- スライドショーコンテナ -->
+                <div class="slideshow-container"></div>
+                <!-- スライドショーコントロール -->
+                <div class="slideshow-controls" style="display: none;">
+                    <button class="slide-prev" aria-label="前の画像">‹</button>
+                    <button class="slide-next" aria-label="次の画像">›</button>
+                </div>
+                <!-- サムネイル一覧 -->
+                <div class="slideshow-thumbnails" style="display: none;"></div>
+            </div>
+            <div class="modal-info">
+                <h3 class="modal-title"></h3>
+                <div class="modal-description"></div>
+                <div class="modal-tags"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <style>
 .play-button-overlay {
     position: absolute;
@@ -630,7 +676,28 @@ get_header(); ?>
     font-weight: bold;
 }
 
+/* ギャラリーバッジ */
+.gallery-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 0.4rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
 /* サービスカード開閉の修正 */
+.service-header {
+    cursor: pointer;
+}
+
 .service-toggle {
     width: 30px;
     height: 30px;
@@ -644,6 +711,7 @@ get_header(); ?>
     font-weight: bold;
     transition: transform 0.3s ease;
     cursor: pointer;
+    pointer-events: none;
 }
 
 .service-card.active .service-toggle {
@@ -672,6 +740,7 @@ get_header(); ?>
     overflow: hidden;
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .portfolio-item:hover {
@@ -757,6 +826,241 @@ get_header(); ?>
     margin-top: 2rem;
 }
 
+/* ポートフォリオモーダル */
+.portfolio-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+}
+
+.portfolio-modal.active {
+    display: block;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    cursor: pointer;
+}
+
+.modal-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 20px;
+    max-width: 900px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    z-index: 10001;
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10002;
+}
+
+.modal-close:hover {
+    background: rgba(0, 0, 0, 0.8);
+    transform: rotate(90deg);
+}
+
+.modal-body {
+    padding: 2rem;
+}
+
+.modal-media {
+    margin-bottom: 2rem;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #000;
+    position: relative;
+    min-height: 400px;
+}
+
+.modal-media img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.modal-media iframe,
+.modal-media blockquote {
+    width: 100%;
+    min-height: 400px;
+}
+
+/* スライドショーコンテナ */
+.slideshow-container {
+    position: relative;
+    width: 100%;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.slideshow-container img {
+    max-width: 100%;
+    max-height: 500px;
+    width: auto;
+    height: auto;
+    display: block;
+    object-fit: contain;
+}
+
+.slideshow-container iframe,
+.slideshow-container blockquote,
+.slideshow-container > div {
+    width: 100%;
+    height: 100%;
+    min-height: 400px;
+}
+
+.slide-item {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.slide-item.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* スライドショーコントロール */
+.slideshow-controls {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    display: flex;
+    justify-content: space-between;
+    padding: 0 1rem;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.slide-prev,
+.slide-next {
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.slide-prev:hover,
+.slide-next:hover {
+    background: rgba(255, 215, 0, 0.9);
+    transform: scale(1.1);
+}
+
+/* サムネイル一覧 */
+.slideshow-thumbnails {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem;
+    overflow-x: auto;
+    background: rgba(0, 0, 0, 0.05);
+    justify-content: center;
+    margin-top: 1rem;
+}
+
+.thumb-item {
+    width: 80px;
+    height: 80px;
+    flex-shrink: 0;
+    cursor: pointer;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.thumb-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.thumb-item.active {
+    border-color: #FFD700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.thumb-item:hover {
+    border-color: #FFA500;
+    transform: scale(1.05);
+}
+
+.modal-title {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.modal-description {
+    color: #666;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+}
+
+.modal-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.modal-tags .portfolio-tag {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 15px;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
 /* お客様の声スライダー */
 .testimonials-slider {
     position: relative;
@@ -777,15 +1081,32 @@ get_header(); ?>
     transition: all 0.3s ease;
     display: none;
     margin: 0 1rem;
+    position: relative;
 }
 
 .testimonial-item.active {
     display: block;
 }
 
+/* サービスタグを左上に配置 */
+.testimonial-tag {
+    position: absolute;
+    top: 1.5rem;
+    left: 2rem;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: white;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    z-index: 2;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}
+
 .testimonial-content {
     margin-bottom: 2rem;
     position: relative;
+    margin-top: 1rem;
 }
 
 .quote {
@@ -833,15 +1154,6 @@ get_header(); ?>
     color: #666;
     font-size: 0.9rem;
     margin-bottom: 0.3rem;
-}
-
-.author-info .author-service {
-    background: linear-gradient(135deg, #FFD700, #FFA500);
-    color: white;
-    padding: 0.2rem 0.8rem;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    display: inline-block;
 }
 
 .slider-nav {
@@ -934,35 +1246,57 @@ get_header(); ?>
     .slider-nav {
         gap: 1rem;
     }
+    
+    .modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .modal-media iframe,
+    .modal-media blockquote {
+        min-height: 300px;
+    }
 }
 </style>
 
 <script>
-// サービスカード開閉機能（個別対応）
+// サービスカード開閉機能
 document.addEventListener('DOMContentLoaded', function() {
     const serviceCards = document.querySelectorAll('.service-card');
     
     serviceCards.forEach(card => {
+        const header = card.querySelector('.service-header');
         const toggle = card.querySelector('.service-toggle');
         
-        card.addEventListener('click', function(e) {
-            // 他のカードを閉じる
-            serviceCards.forEach(otherCard => {
-                if (otherCard !== card) {
-                    otherCard.classList.remove('active');
-                    const otherToggle = otherCard.querySelector('.service-toggle');
-                    otherToggle.textContent = '+';
+        if (header && toggle) {
+            header.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // 他のカードを閉じる
+                serviceCards.forEach(otherCard => {
+                    if (otherCard !== card) {
+                        otherCard.classList.remove('active');
+                        const otherToggle = otherCard.querySelector('.service-toggle');
+                        if (otherToggle) {
+                            otherToggle.textContent = '+';
+                        }
+                    }
+                });
+                
+                // クリックしたカードを開閉
+                card.classList.toggle('active');
+                if (card.classList.contains('active')) {
+                    toggle.textContent = '−';
+                } else {
+                    toggle.textContent = '+';
                 }
             });
-            
-            // クリックしたカードを開閉
-            this.classList.toggle('active');
-            if (this.classList.contains('active')) {
-                toggle.textContent = '−';
-            } else {
-                toggle.textContent = '+';
-            }
-        });
+        }
     });
 
     // お客様の声スライダー
@@ -992,9 +1326,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ナビゲーションボタン
-    if (document.querySelector('.slider-btn.next')) {
-        document.querySelector('.slider-btn.next').addEventListener('click', nextSlide);
-        document.querySelector('.slider-btn.prev').addEventListener('click', prevSlide);
+    const nextBtn = document.querySelector('.slider-btn.next');
+    const prevBtn = document.querySelector('.slider-btn.prev');
+    
+    if (nextBtn) {
+        nextBtn.addEventListener('click', nextSlide);
+    }
+    if (prevBtn) {
+        prevBtn.addEventListener('click', prevSlide);
     }
 
     // ドットナビゲーション
@@ -1008,6 +1347,197 @@ document.addEventListener('DOMContentLoaded', function() {
     // 自動スライド（5秒間隔）
     if (testimonials.length > 0) {
         setInterval(nextSlide, 5000);
+    }
+
+    // ポートフォリオモーダル機能
+    const modal = document.getElementById('portfolio-modal');
+    const modalClose = document.querySelector('.modal-close');
+    const modalOverlay = document.querySelector('.modal-overlay');
+    let currentSlideIndex = 0;
+    let galleryImages = [];
+
+    document.querySelectorAll('.portfolio-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const portfolioId = this.dataset.portfolioId;
+            const mediaType = this.dataset.mediaType;
+            const videoUrl = this.dataset.videoUrl;
+            const title = this.querySelector('h4').textContent;
+            const description = this.querySelector('.portfolio-content p').textContent;
+            const tags = this.querySelectorAll('.portfolio-tag');
+            const galleryData = this.dataset.gallery;
+            
+            // モーダルにコンテンツを設定
+            document.querySelector('.modal-title').textContent = title;
+            document.querySelector('.modal-description').textContent = description;
+            
+            // タグを設定
+            const modalTags = document.querySelector('.modal-tags');
+            modalTags.innerHTML = '';
+            tags.forEach(tag => {
+                modalTags.innerHTML += '<span class="portfolio-tag">' + tag.textContent + '</span>';
+            });
+            
+            // メディアを設定
+            const slideshowContainer = document.querySelector('.slideshow-container');
+            const slideshowControls = document.querySelector('.slideshow-controls');
+            const slideshowThumbnails = document.querySelector('.slideshow-thumbnails');
+            
+            if (mediaType === 'video' && videoUrl) {
+                // 動画埋め込み
+                fetch('<?php echo admin_url("admin-ajax.php"); ?>?action=get_video_embed&video_url=' + encodeURIComponent(videoUrl))
+                    .then(response => response.text())
+                    .then(html => {
+                        slideshowContainer.innerHTML = html;
+                        slideshowControls.style.display = 'none';
+                        slideshowThumbnails.style.display = 'none';
+                    });
+            } else if (galleryData) {
+                // 複数画像のスライドショー
+                try {
+                    galleryImages = JSON.parse(galleryData);
+                    if (galleryImages.length > 0) {
+                        currentSlideIndex = 0;
+                        renderSlideshow();
+                        
+                        // 複数画像の場合のみコントロールとサムネイルを表示
+                        if (galleryImages.length > 1) {
+                            slideshowControls.style.display = 'flex';
+                            slideshowThumbnails.style.display = 'flex';
+                            renderThumbnails();
+                        } else {
+                            slideshowControls.style.display = 'none';
+                            slideshowThumbnails.style.display = 'none';
+                        }
+                    }
+                } catch (e) {
+                    console.error('ギャラリーデータのパースエラー:', e);
+                    slideshowContainer.innerHTML = '<p>画像の読み込みに失敗しました</p>';
+                    slideshowControls.style.display = 'none';
+                    slideshowThumbnails.style.display = 'none';
+                }
+            } else {
+                // 単一画像
+                const img = this.querySelector('.portfolio-image img');
+                if (img) {
+                    slideshowContainer.innerHTML = '<img src="' + img.src + '" alt="' + title + '">';
+                } else {
+                    slideshowContainer.innerHTML = '<p>画像がありません</p>';
+                }
+                slideshowControls.style.display = 'none';
+                slideshowThumbnails.style.display = 'none';
+            }
+            
+            // モーダル表示
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+    });
+
+    // スライドショーを描画
+    function renderSlideshow() {
+        const container = document.querySelector('.slideshow-container');
+        container.innerHTML = '';
+        
+        galleryImages.forEach((image, index) => {
+            const slideDiv = document.createElement('div');
+            slideDiv.className = 'slide-item' + (index === currentSlideIndex ? ' active' : '');
+            slideDiv.innerHTML = '<img src="' + image.url + '" alt="画像' + (index + 1) + '">';
+            container.appendChild(slideDiv);
+        });
+    }
+
+    // サムネイルを描画
+    function renderThumbnails() {
+        const container = document.querySelector('.slideshow-thumbnails');
+        container.innerHTML = '';
+        
+        galleryImages.forEach((image, index) => {
+            const thumbDiv = document.createElement('div');
+            thumbDiv.className = 'thumb-item' + (index === currentSlideIndex ? ' active' : '');
+            thumbDiv.innerHTML = '<img src="' + image.url + '" alt="サムネイル' + (index + 1) + '">';
+            thumbDiv.addEventListener('click', function() {
+                currentSlideIndex = index;
+                updateSlideshow();
+            });
+            container.appendChild(thumbDiv);
+        });
+    }
+
+    // スライドショーを更新
+    function updateSlideshow() {
+        const slides = document.querySelectorAll('.slide-item');
+        const thumbs = document.querySelectorAll('.thumb-item');
+        
+        slides.forEach((slide, index) => {
+            if (index === currentSlideIndex) {
+                slide.classList.add('active');
+            } else {
+                slide.classList.remove('active');
+            }
+        });
+        
+        thumbs.forEach((thumb, index) => {
+            if (index === currentSlideIndex) {
+                thumb.classList.add('active');
+            } else {
+                thumb.classList.remove('active');
+            }
+        });
+    }
+
+    // 前へボタン
+    const slidePrevBtn = document.querySelector('.slide-prev');
+    if (slidePrevBtn) {
+        slidePrevBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (galleryImages.length > 0) {
+                currentSlideIndex = (currentSlideIndex - 1 + galleryImages.length) % galleryImages.length;
+                updateSlideshow();
+            }
+        });
+    }
+
+    // 次へボタン
+    const slideNextBtn = document.querySelector('.slide-next');
+    if (slideNextBtn) {
+        slideNextBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (galleryImages.length > 0) {
+                currentSlideIndex = (currentSlideIndex + 1) % galleryImages.length;
+                updateSlideshow();
+            }
+        });
+    }
+
+    // キーボード操作
+    document.addEventListener('keydown', function(e) {
+        if (modal && modal.classList.contains('active')) {
+            if (e.key === 'ArrowLeft' && slidePrevBtn) {
+                slidePrevBtn.click();
+            } else if (e.key === 'ArrowRight' && slideNextBtn) {
+                slideNextBtn.click();
+            } else if (e.key === 'Escape') {
+                closeModal();
+            }
+        }
+    });
+
+    // モーダルを閉じる
+    function closeModal() {
+        if (modal) {
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            currentSlideIndex = 0;
+            galleryImages = [];
+        }
+    }
+
+    if (modalClose) {
+        modalClose.addEventListener('click', closeModal);
+    }
+    
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', closeModal);
     }
 });
 </script>
