@@ -17,13 +17,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-
+/*
     // サービスカードの開閉
     document.querySelectorAll('.service-card').forEach(card => {
         card.addEventListener('click', function() {
             this.classList.toggle('active');
         });
     });
+*/
     
     // フェードインアニメーション
     const observerOptions = {

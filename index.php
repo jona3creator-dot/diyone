@@ -15,155 +15,155 @@ get_header(); ?>
         </div>
     </section>
 
-    <!-- サービス -->
-    <section id="services" class="section services">
-        <div class="container">
-            <h2 class="section-title fade-in">Service</h2>
-            <p class="section-subtitle fade-in">オンラインで完結する幅広いデジタルサービスを提供</p>
-            
-            <div class="services-grid">
-                <!-- 映像制作 -->
-                <div class="service-card fade-in">
-                    <div class="service-header">
-                        <div class="service-info">
-                            <div class="service-icon">🎥</div>
-                            <h3 class="service-title">映像制作</h3>
-                        </div>
-                        <div class="service-toggle">+</div>
+<!-- サービスセクション（修正版 - display切り替え方式） -->
+<section id="services" class="section services">
+    <div class="container">
+        <h2 class="section-title fade-in">Service</h2>
+        <p class="section-subtitle fade-in">オンラインで完結する幅広いデジタルサービスを提供</p>
+        
+        <div class="services-grid">
+            <!-- 映像制作 -->
+            <div class="service-card fade-in">
+                <div class="service-header">
+                    <div class="service-info">
+                        <div class="service-icon">🎥</div>
+                        <h3 class="service-title">映像制作</h3>
                     </div>
-                    <div class="service-content">
-                        <p class="service-description">企業PR動画、商品紹介、イベント映像など、目的に応じた高品質な映像コンテンツを制作。AI技術も活用し効率的で革新的な制作を実現します</p>
-                        <ul class="service-features">
-                            <li>企業PR・会社紹介動画</li>
-                            <li>商品・サービス紹介動画</li>
-                            <li>イベント・セミナー映像</li>
-                            <li>AIツールを活用した効率制作</li>
-                        </ul>
-                    </div>
+                    <div class="service-toggle">+</div>
                 </div>
-
-                <!-- デザイン制作 -->
-                <div class="service-card fade-in">
-                    <div class="service-header">
-                        <div class="service-info">
-                            <div class="service-icon">🎨</div>
-                            <h3 class="service-title">デザイン制作</h3>
-                        </div>
-                        <div class="service-toggle">+</div>
-                    </div>
-                    <div class="service-content">
-                        <p class="service-description">サムネイル、バナー、ロゴ、チラシまで、ブランドイメージを向上させるデザインを提供。AIデザインツールも駆使し、迅速で高品質な制作をお約束します</p>
-                        <ul class="service-features">
-                            <li>ロゴ・ブランドアイデンティティ</li>
-                            <li>SNS用バナー・サムネイル</li>
-                            <li>チラシ・ポスターデザイン</li>
-                            <li>AIデザインツール活用</li>
-                        </ul>
-                    </div>
+                <div class="service-content" style="display: none;">
+                    <p class="service-description">企業PR動画、商品紹介、イベント映像など、目的に応じた高品質な映像コンテンツを制作。AI技術も活用し効率的で革新的な制作を実現します</p>
+                    <ul class="service-features">
+                        <li>企業PR・会社紹介動画</li>
+                        <li>商品・サービス紹介動画</li>
+                        <li>イベント・セミナー映像</li>
+                        <li>AIツールを活用した効率制作</li>
+                    </ul>
                 </div>
+            </div>
 
-                <!-- Web制作 -->
-                <div class="service-card fade-in">
-                    <div class="service-header">
-                        <div class="service-info">
-                            <div class="service-icon">💻</div>
-                            <h3 class="service-title">Web制作</h3>
-                        </div>
-                        <div class="service-toggle">+</div>
+            <!-- デザイン制作 -->
+            <div class="service-card fade-in">
+                <div class="service-header">
+                    <div class="service-info">
+                        <div class="service-icon">🎨</div>
+                        <h3 class="service-title">デザイン制作</h3>
                     </div>
-                    <div class="service-content">
-                        <p class="service-description">コーポレートサイトからECサイトまで、目的に応じたWebサイトを制作。レスポンシブ対応とSEO最適化で成果につながるサイトを提供します</p>
-                        <ul class="service-features">
-                            <li>コーポレートサイト制作</li>
-                            <li>ECサイト構築</li>
-                            <li>ランディングページ制作</li>
-                            <li>WordPress開発</li>
-                        </ul>
-                    </div>
+                    <div class="service-toggle">+</div>
                 </div>
-
-                <!-- SNS運用 -->
-                <div class="service-card fade-in">
-                    <div class="service-header">
-                        <div class="service-info">
-                            <div class="service-icon">📱</div>
-                            <h3 class="service-title">SNS運用</h3>
-                        </div>
-                        <div class="service-toggle">+</div>
-                    </div>
-                    <div class="service-content">
-                        <p class="service-description">Instagram、Twitter、TikTokなど各SNSの特性を活かした戦略的な運用をサポート。データに基づいた最適化で成果を最大化します</p>
-                        <ul class="service-features">
-                            <li>Instagram・Twitter・TikTok運用</li>
-                            <li>コンテンツ企画・制作</li>
-                            <li>フォロワー獲得戦略</li>
-                            <li>分析・改善提案</li>
-                        </ul>
-                    </div>
+                <div class="service-content" style="display: none;">
+                    <p class="service-description">サムネイル、バナー、ロゴ、チラシまで、ブランドイメージを向上させるデザインを提供。AIデザインツールも駆使し、迅速で高品質な制作をお約束します</p>
+                    <ul class="service-features">
+                        <li>ロゴ・ブランドアイデンティティ</li>
+                        <li>SNS用バナー・サムネイル</li>
+                        <li>チラシ・ポスターデザイン</li>
+                        <li>AIデザインツール活用</li>
+                    </ul>
                 </div>
+            </div>
 
-                <!-- 広告運用 -->
-                <div class="service-card fade-in">
-                    <div class="service-header">
-                        <div class="service-info">
-                            <div class="service-icon">📊</div>
-                            <h3 class="service-title">広告運用</h3>
-                        </div>
-                        <div class="service-toggle">+</div>
+            <!-- Web制作 -->
+            <div class="service-card fade-in">
+                <div class="service-header">
+                    <div class="service-info">
+                        <div class="service-icon">💻</div>
+                        <h3 class="service-title">Web制作</h3>
                     </div>
-                    <div class="service-content">
-                        <p class="service-description">Meta広告、Google広告の運用から、GA4を活用した詳細分析まで。データドリブンな広告戦略でROIを最大化します</p>
-                        <ul class="service-features">
-                            <li>Meta広告（Facebook・Instagram）</li>
-                            <li>Google広告・YouTube広告</li>
-                            <li>GA4分析・コンバージョン最適化</li>
-                            <li>広告クリエイティブ制作</li>
-                        </ul>
-                    </div>
+                    <div class="service-toggle">+</div>
                 </div>
-
-                <!-- YouTube運営とM&A -->
-                <div class="service-card fade-in">
-                    <div class="service-header">
-                        <div class="service-info">
-                            <div class="service-icon">📺</div>
-                            <h3 class="service-title">YouTube運営とM&A</h3>
-                        </div>
-                        <div class="service-toggle">+</div>
-                    </div>
-                    <div class="service-content">
-                        <p class="service-description">チャンネル設計から動画制作、分析まで、YouTubeマーケティングを一括サポート。収益化からM&A支援まで戦略的に構築します</p>
-                        <ul class="service-features">
-                            <li>チャンネル設計・最適化</li>
-                            <li>動画企画・制作・編集</li>
-                            <li>SEO対策・サムネイル制作</li>
-                            <li>収益化戦略・M&A支援</li>
-                        </ul>
-                    </div>
+                <div class="service-content" style="display: none;">
+                    <p class="service-description">コーポレートサイトからECサイトまで、目的に応じたWebサイトを制作。レスポンシブ対応とSEO最適化で成果につながるサイトを提供します</p>
+                    <ul class="service-features">
+                        <li>コーポレートサイト制作</li>
+                        <li>ECサイト構築</li>
+                        <li>ランディングページ制作</li>
+                        <li>WordPress開発</li>
+                    </ul>
                 </div>
+            </div>
 
-                <!-- オンライン事務 -->
-                <div class="service-card fade-in">
-                    <div class="service-header">
-                        <div class="service-info">
-                            <div class="service-icon">💼</div>
-                            <h3 class="service-title">オンライン事務</h3>
-                        </div>
-                        <div class="service-toggle">+</div>
+            <!-- SNS運用 -->
+            <div class="service-card fade-in">
+                <div class="service-header">
+                    <div class="service-info">
+                        <div class="service-icon">📱</div>
+                        <h3 class="service-title">SNS運用</h3>
                     </div>
-                    <div class="service-content">
-                        <p class="service-description">データ入力、資料作成、スプレッドシート関数まで、業務効率化をサポート。ルーチンワークの自動化で生産性を向上させます</p>
-                        <ul class="service-features">
-                            <li>データ入力・整理</li>
-                            <li>資料作成・プレゼン制作</li>
-                            <li>スプレッドシート関数・自動化</li>
-                            <li>業務フロー最適化</li>
-                        </ul>
+                    <div class="service-toggle">+</div>
+                </div>
+                <div class="service-content" style="display: none;">
+                    <p class="service-description">Instagram、Twitter、TikTokなど各SNSの特性を活かした戦略的な運用をサポート。データに基づいた最適化で成果を最大化します</p>
+                    <ul class="service-features">
+                        <li>Instagram・Twitter・TikTok運用</li>
+                        <li>コンテンツ企画・制作</li>
+                        <li>フォロワー獲得戦略</li>
+                        <li>分析・改善提案</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 広告運用 -->
+            <div class="service-card fade-in">
+                <div class="service-header">
+                    <div class="service-info">
+                        <div class="service-icon">📊</div>
+                        <h3 class="service-title">広告運用</h3>
                     </div>
+                    <div class="service-toggle">+</div>
+                </div>
+                <div class="service-content" style="display: none;">
+                    <p class="service-description">Meta広告、Google広告の運用から、GA4を活用した詳細分析まで。データドリブンな広告戦略でROIを最大化します</p>
+                    <ul class="service-features">
+                        <li>Meta広告（Facebook・Instagram）</li>
+                        <li>Google広告・YouTube広告</li>
+                        <li>GA4分析・コンバージョン最適化</li>
+                        <li>広告クリエイティブ制作</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- YouTube運営とM&A -->
+            <div class="service-card fade-in">
+                <div class="service-header">
+                    <div class="service-info">
+                        <div class="service-icon">📺</div>
+                        <h3 class="service-title">YouTube運営とM&A</h3>
+                    </div>
+                    <div class="service-toggle">+</div>
+                </div>
+                <div class="service-content" style="display: none;">
+                    <p class="service-description">チャンネル設計から動画制作、分析まで、YouTubeマーケティングを一括サポート。収益化からM&A支援まで戦略的に構築します</p>
+                    <ul class="service-features">
+                        <li>チャンネル設計・最適化</li>
+                        <li>動画企画・制作・編集</li>
+                        <li>SEO対策・サムネイル制作</li>
+                        <li>収益化戦略・M&A支援</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- オンライン事務 -->
+            <div class="service-card fade-in">
+                <div class="service-header">
+                    <div class="service-info">
+                        <div class="service-icon">💼</div>
+                        <h3 class="service-title">オンライン事務</h3>
+                    </div>
+                    <div class="service-toggle">+</div>
+                </div>
+                <div class="service-content" style="display: none;">
+                    <p class="service-description">データ入力、資料作成、スプレッドシート関数まで、業務効率化をサポート。ルーチンワークの自動化で生産性を向上させます</p>
+                    <ul class="service-features">
+                        <li>データ入力・整理</li>
+                        <li>資料作成・プレゼン制作</li>
+                        <li>スプレッドシート関数・自動化</li>
+                        <li>業務フロー最適化</li>
+                    </ul>
                 </div>
             </div>
         </div>
-    </section>
+    </div>
+</section>
 
     <!-- 制作フロー -->
     <section id="workflow" class="section workflow">
@@ -694,8 +694,51 @@ get_header(); ?>
 }
 
 /* サービスカード開閉の修正 */
+.service-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.2);
+}
+
 .service-header {
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-bottom: 1px solid rgba(255, 215, 0, 0.1);
     cursor: pointer;
+}
+
+.service-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.service-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.3rem;
+}
+
+.service-title {
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #333;
 }
 
 .service-toggle {
@@ -712,10 +755,43 @@ get_header(); ?>
     transition: transform 0.3s ease;
     cursor: pointer;
     pointer-events: none;
+    line-height: 1;
 }
 
-.service-card.active .service-toggle {
+/* openクラスが付いた時の回転 */
+.service-card.open .service-toggle {
     transform: rotate(45deg);
+}
+
+/* service-contentはdisplayで切り替え */
+.service-content {
+    padding: 2rem;
+}
+
+.service-description {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.service-features {
+    list-style: none;
+    padding: 0;
+}
+
+.service-features li {
+    padding: 0.3rem 0;
+    color: #666;
+    position: relative;
+    padding-left: 1.2rem;
+}
+
+.service-features li:before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #FFD700;
+    font-weight: bold;
 }
 
 /* ポートフォリオセクション */
@@ -1269,36 +1345,40 @@ get_header(); ?>
 </style>
 
 <script>
-// サービスカード開閉機能
+// サービスカード開閉機能（display切り替え方式）
 document.addEventListener('DOMContentLoaded', function() {
     const serviceCards = document.querySelectorAll('.service-card');
     
     serviceCards.forEach(card => {
         const header = card.querySelector('.service-header');
+        const content = card.querySelector('.service-content');
         const toggle = card.querySelector('.service-toggle');
         
-        if (header && toggle) {
+        if (header && content && toggle) {
             header.addEventListener('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
                 
-                // 他のカードを閉じる
+                const isOpen = card.classList.contains('open');
+                
+                // 全てのカードを閉じる
                 serviceCards.forEach(otherCard => {
-                    if (otherCard !== card) {
-                        otherCard.classList.remove('active');
-                        const otherToggle = otherCard.querySelector('.service-toggle');
-                        if (otherToggle) {
-                            otherToggle.textContent = '+';
-                        }
+                    otherCard.classList.remove('open');
+                    const otherContent = otherCard.querySelector('.service-content');
+                    const otherToggle = otherCard.querySelector('.service-toggle');
+                    if (otherContent) {
+                        otherContent.style.display = 'none';
+                    }
+                    if (otherToggle) {
+                        otherToggle.textContent = '+';
                     }
                 });
                 
-                // クリックしたカードを開閉
-                card.classList.toggle('active');
-                if (card.classList.contains('active')) {
-                    toggle.textContent = '−';
-                } else {
-                    toggle.textContent = '+';
+                // クリックしたカードが閉じていた場合のみ開く
+                if (!isOpen) {
+                    card.classList.add('open');
+                    content.style.display = 'block';
+                    toggle.textContent = '+'; // プラスのまま（回転で×に見える）
                 }
             });
         }
