@@ -44,25 +44,25 @@
                 
                 <ul class="nav-menu" role="menubar">
                     <li role="menuitem">
-                        <a href="<?php echo esc_url(home_url('/#services')); ?>">サービス</a>
+                        <a href="<?php echo esc_url(home_url('/')); ?>#services">サービス</a>
                     </li>
                     <li role="menuitem">
-                        <a href="<?php echo esc_url(home_url('/#workflow')); ?>">制作フロー</a>
+                        <a href="<?php echo esc_url(home_url('/')); ?>#workflow">制作フロー</a>
                     </li>
                     <li role="menuitem">
-                        <a href="<?php echo esc_url(home_url('/#strengths')); ?>">強み</a>
+                        <a href="<?php echo esc_url(home_url('/')); ?>#strengths">強み</a>
                     </li>
                     <li role="menuitem">
-                        <a href="<?php echo esc_url(home_url('/#portfolio')); ?>">実績</a>
+                        <a href="<?php echo esc_url(home_url('/')); ?>#portfolio">実績</a>
                     </li>
                     <li role="menuitem">
-                        <a href="<?php echo esc_url(home_url('/#testimonials')); ?>">お客様の声</a>
+                        <a href="<?php echo esc_url(home_url('/')); ?>#testimonials">お客様の声</a>
                     </li>
                     <li role="menuitem">
-                        <a href="<?php echo esc_url(home_url('/#company')); ?>">会社概要</a>
+                        <a href="<?php echo esc_url(home_url('/')); ?>#company">会社概要</a>
                     </li>
                     <li role="menuitem">
-                        <a href="<?php echo esc_url(home_url('/#contact')); ?>" class="cta-button">お問い合わせ</a>
+                        <a href="<?php echo esc_url(home_url('/')); ?>#contact" class="cta-button">お問い合わせ</a>
                     </li>
                 </ul>
                 
@@ -81,25 +81,25 @@
             <button class="mobile-menu-close" aria-label="メニューを閉じる">&times;</button>
             <ul class="mobile-nav-menu" role="menubar">
                 <li role="menuitem">
-                    <a href="<?php echo esc_url(home_url('/#services')); ?>">サービス</a>
+                    <a href="<?php echo esc_url(home_url('/')); ?>#services">サービス</a>
                 </li>
                 <li role="menuitem">
-                    <a href="<?php echo esc_url(home_url('/#workflow')); ?>">制作フロー</a>
+                    <a href="<?php echo esc_url(home_url('/')); ?>#workflow">制作フロー</a>
                 </li>
                 <li role="menuitem">
-                    <a href="<?php echo esc_url(home_url('/#strengths')); ?>">強み</a>
+                    <a href="<?php echo esc_url(home_url('/')); ?>#strengths">強み</a>
                 </li>
                 <li role="menuitem">
-                    <a href="<?php echo esc_url(home_url('/#portfolio')); ?>">実績</a>
+                    <a href="<?php echo esc_url(home_url('/')); ?>#portfolio">実績</a>
                 </li>
                 <li role="menuitem">
-                    <a href="<?php echo esc_url(home_url('/#testimonials')); ?>">お客様の声</a>
+                    <a href="<?php echo esc_url(home_url('/')); ?>#testimonials">お客様の声</a>
                 </li>
                 <li role="menuitem">
-                    <a href="<?php echo esc_url(home_url('/#company')); ?>">会社概要</a>
+                    <a href="<?php echo esc_url(home_url('/')); ?>#company">会社概要</a>
                 </li>
                 <li role="menuitem">
-                    <a href="<?php echo esc_url(home_url('/#contact')); ?>" class="mobile-cta-button">お問い合わせ</a>
+                    <a href="<?php echo esc_url(home_url('/')); ?>#contact" class="mobile-cta-button">お問い合わせ</a>
                 </li>
             </ul>
         </div>

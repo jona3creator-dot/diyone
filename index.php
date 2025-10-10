@@ -358,7 +358,7 @@ get_header(); ?>
                         <div class="testimonial-tag">映像制作</div>
                         <div class="testimonial-content">
                             <div class="quote">"</div>
-                            <p>迅速で丁寧な対応に大変満足しています。動画制作から運用まで一貫してお願いできるので、非常に助かっています。品質も期待以上でした。</p>
+                            <p>迅速で丁寧な対応に大変満足しています。動画制作から運用まで一貫してお願いできるので、非常に助かっています。品質も期待以上でした。企画段階から細かくヒアリングしていただき、私たちの要望を的確に形にしてくださいました。納品後のフォローも手厚く、長期的なパートナーとして信頼できる会社だと感じています。</p>
                         </div>
                         <div class="testimonial-author">
                             <div class="author-avatar">
@@ -376,7 +376,7 @@ get_header(); ?>
                         <div class="testimonial-tag">SNS運用代行</div>
                         <div class="testimonial-content">
                             <div class="quote">"</div>
-                            <p>SNS運用を任せてから、フォロワー数が大幅に増加し、売上にも直結しています。戦略的な運用で成果が目に見えて分かります。</p>
+                            <p>SNS運用を任せてから、フォロワー数が大幅に増加し、売上にも直結しています。戦略的な運用で成果が目に見えて分かります。投稿内容の企画から分析まで、すべてをプロフェッショナルに対応していただき、私たちは本業に集中できるようになりました。データに基づいた改善提案も的確で、継続的な成長を実感しています。</p>
                         </div>
                         <div class="testimonial-author">
                             <div class="author-avatar">
@@ -394,7 +394,7 @@ get_header(); ?>
                         <div class="testimonial-tag">デザイン制作</div>
                         <div class="testimonial-content">
                             <div class="quote">"</div>
-                            <p>デザインのクオリティが高く、ブランドイメージの向上につながりました。細かい要望にも柔軟に対応していただけました。</p>
+                            <p>デザインのクオリティが高く、ブランドイメージの向上につながりました。細かい要望にも柔軟に対応していただけました。初回の提案から完成度が高く、修正回数も最小限で済みました。トレンドを押さえつつも、私たちのブランドらしさを表現してくださり、お客様からの反響も非常に良好です。今後も継続してお願いしたいと思っています。</p>
                         </div>
                         <div class="testimonial-author">
                             <div class="author-avatar">
@@ -412,7 +412,7 @@ get_header(); ?>
                         <div class="testimonial-tag">YouTube運営</div>
                         <div class="testimonial-content">
                             <div class="quote">"</div>
-                            <p>YouTubeチャンネルの運営をお願いして大正解でした。登録者数が順調に伸び、収益化まで達成できました。</p>
+                            <p>YouTubeチャンネルの運営をお願いして大正解でした。登録者数が順調に伸び、収益化まで達成できました。企画の段階から視聴者のニーズを分析し、効果的なコンテンツ作りをサポートしていただきました。サムネイルやタイトルの最適化、SEO対策まで細かくフォローしてくださり、想像以上の成果を上げることができています。</p>
                         </div>
                         <div class="testimonial-author">
                             <div class="author-avatar">
@@ -430,7 +430,7 @@ get_header(); ?>
                         <div class="testimonial-tag">Web制作</div>
                         <div class="testimonial-content">
                             <div class="quote">"</div>
-                            <p>Web制作からSEO対策まで一括でお任せできて助かりました。おかげでお問い合わせ数が大幅に増加しています。</p>
+                            <p>Web制作からSEO対策まで一括でお任せできて助かりました。おかげでお問い合わせ数が大幅に増加しています。使いやすいデザインと分かりやすい導線設計で、訪問者の滞在時間も伸びました。定期的なメンテナンスやアップデートの提案もいただけるので、常に最新の状態を保つことができています。投資対効果が非常に高いと実感しています。</p>
                         </div>
                         <div class="testimonial-author">
                             <div class="author-avatar">
@@ -523,7 +523,7 @@ get_header(); ?>
                 
                 <div class="form-group">
                     <label for="company">会社名・団体名</label>
-                    <input type="text" id="company" name="company">
+                    <input type="text" name="company">
                 </div>
                 
                 <div class="form-group">
@@ -1075,13 +1075,14 @@ get_header(); ?>
 
 .testimonial-item {
     background: white;
-    padding: 3rem 2rem 2rem;
+    padding: 4rem 2.5rem 2.5rem;
     border-radius: 20px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     transition: all 0.3s ease;
     display: none;
     margin: 0 1rem;
     position: relative;
+    min-height: 400px;
 }
 
 .testimonial-item.active {
@@ -1091,41 +1092,45 @@ get_header(); ?>
 /* サービスタグを左上に配置 */
 .testimonial-tag {
     position: absolute;
-    top: 1.5rem;
-    left: 2rem;
+    top: 2rem;
+    left: 2.5rem;
     background: linear-gradient(135deg, #FFD700, #FFA500);
     color: white;
-    padding: 0.4rem 1rem;
+    padding: 0.5rem 1.2rem;
     border-radius: 20px;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 600;
-    z-index: 2;
+    z-index: 3;
     box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
 }
 
 .testimonial-content {
     margin-bottom: 2rem;
     position: relative;
-    margin-top: 1rem;
+    margin-top: 2.5rem;
 }
 
 .quote {
-    font-size: 4rem;
+    font-size: 3rem;
     color: #FFD700;
     position: absolute;
-    top: -2rem;
-    left: -0.5rem;
+    top: -1.5rem;
+    left: 0;
     font-family: serif;
-    opacity: 0.3;
+    opacity: 0.2;
     line-height: 1;
+    z-index: 1;
 }
 
 .testimonial-content p {
     color: #333;
-    line-height: 1.8;
+    line-height: 1.9;
     font-style: italic;
-    margin-left: 2rem;
-    font-size: 1.1rem;
+    margin-left: 0;
+    font-size: 1.05rem;
+    position: relative;
+    z-index: 2;
+    text-align: justify;
 }
 
 .testimonial-author {
