@@ -16,8 +16,35 @@ add_action('after_setup_theme', 'diyone_theme_setup');
 
 // スタイルとスクリプトの読み込み
 function diyone_enqueue_scripts() {
-    wp_enqueue_style('diyone-style', get_stylesheet_uri(), array(), '1.0.0');
-    wp_enqueue_script('diyone-script', get_template_directory_uri() . '/js/script.js', array(), '1.0.0', true);
+    // 共通CSS/JS（全ページで読み込み）
+    wp_enqueue_style('diyone-style', get_stylesheet_uri(), array(), '1.0.1');
+    wp_enqueue_script('diyone-script', get_template_directory_uri() . '/js/script.js', array(), '1.0.1', true);
+    
+    // トップページ：スライダー
+    if (is_front_page() || is_home()) {
+        wp_enqueue_script('diyone-slider', get_template_directory_uri() . '/js/slider.js', array(), '1.0.0', true);
+    }
+    
+    // ポートフォリオページ専用
+    if (is_page_template('page-portfolio.php')) {
+        wp_enqueue_style('portfolio-style', get_template_directory_uri() . '/css/portfolio.css', array('diyone-style'), '1.0.0');
+        wp_enqueue_script('portfolio-script', get_template_directory_uri() . '/js/portfolio.js', array('diyone-script'), '1.0.0', true);
+        
+        // AJAX用のURLを渡す
+        wp_localize_script('portfolio-script', 'portfolioData', array(
+            'ajaxurl' => admin_url('admin-ajax.php')
+        ));
+    }
+    
+    // お問い合わせサンクスページ専用
+    if (is_page_template('page-contact-thanks.php')) {
+        wp_enqueue_style('thanks-style', get_template_directory_uri() . '/css/contact-thanks.css', array('diyone-style'), '1.0.0');
+    }
+    
+    // プライバシーポリシーページ専用
+    if (is_page_template('page-privacy.php')) {
+        wp_enqueue_style('privacy-style', get_template_directory_uri() . '/css/privacy.css', array('diyone-style'), '1.0.0');
+    }
     
     // メディアアップローダー用スクリプト（管理画面のみ）
     if (is_admin()) {
@@ -578,7 +605,7 @@ function diyone_save_portfolio_meta($post_id) {
 }
 add_action('save_post_portfolio', 'diyone_save_portfolio_meta');
 
-// ポートフォリオのギャラリー画像を取得する関数（修正版）
+// ポートフォリオのギャラリー画像を取得する関数
 function diyone_get_portfolio_gallery_images($post_id) {
     $gallery_images = get_post_meta($post_id, '_portfolio_gallery_images', true);
     
