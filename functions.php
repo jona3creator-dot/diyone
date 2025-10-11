@@ -17,7 +17,7 @@ add_action('after_setup_theme', 'diyone_theme_setup');
 // スタイルとスクリプトの読み込み
 function diyone_enqueue_scripts() {
     // 共通CSS/JS（全ページで読み込み）
-    wp_enqueue_style('diyone-style', get_stylesheet_uri(), array(), '1.0.1');
+    wp_enqueue_style('diyone-style', get_stylesheet_uri(), array(), '1.0.2');
     wp_enqueue_script('diyone-script', get_template_directory_uri() . '/js/script.js', array(), '1.0.1', true);
     
     // トップページ：スライダー
@@ -38,12 +38,12 @@ function diyone_enqueue_scripts() {
     
     // お問い合わせサンクスページ専用
     if (is_page_template('page-contact-thanks.php')) {
-        wp_enqueue_style('thanks-style', get_template_directory_uri() . '/css/contact-thanks.css', array('diyone-style'), '1.0.0');
+        wp_enqueue_style('thanks-style', get_template_directory_uri() . '/css/contact-thanks.css', array('diyone-style'), '1.0.1');
     }
     
     // プライバシーポリシーページ専用
     if (is_page_template('page-privacy.php')) {
-        wp_enqueue_style('privacy-style', get_template_directory_uri() . '/css/privacy.css', array('diyone-style'), '1.0.0');
+        wp_enqueue_style('privacy-style', get_template_directory_uri() . '/css/privacy.css', array('diyone-style'), '1.0.1');
     }
     
     // メディアアップローダー用スクリプト（管理画面のみ）

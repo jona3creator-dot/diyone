@@ -1,6 +1,6 @@
 <?php
 /**
- * Page Template: Contact Thanks
+ * Template Name: Contact Thanks Page
  * お問い合わせ完了ページ - DIYONE Corporate Website
  */
 get_header(); ?>
